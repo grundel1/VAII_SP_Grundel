@@ -1,30 +1,53 @@
 ﻿<div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="">Bakalárska_práca</a>
+        <a class="navbar-brand" href="">Objednanie zubára</a>
+        <!-- Hamburger button (skrytý na väčších obrazovkách) -->
+        <input type="checkbox" id="navbar-toggler" class="navbar-toggler d-md-none">
+        <label for="navbar-toggler" class="navbar-toggler-icon"></label>
+
+        <!-- Navigačné odkazy pre väčšie obrazovky -->
+        <nav class="navbar-nav flex-row ms-auto d-none d-md-flex">
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                    Domovská stránka
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="vyhladatZubara">
+                    Vyhľadať zubára
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="login">
+                    Login
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="registracia">
+                    Registrácia
+                </NavLink>
+            </div>
+        </nav>
+
+        <!-- Navigačné odkazy pre menšie obrazovky (zobrazí sa iba po kliknutí na hamburger) -->
+        <div class="nav-scrollable d-md-none">
+            <nav class="navbar-nav">
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        Domovská stránka
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="vyhladatZubara">
+                        Vyhľadať zubára
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="login">
+                        Login
+                    </NavLink>
+                </div>
+            </nav>
+        </div>
     </div>
 </div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
