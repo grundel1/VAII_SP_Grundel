@@ -1,6 +1,24 @@
 ﻿@page "/"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Domovská stránka</title>
+</head>
 
-<PageTitle>Domovská stránka</PageTitle>
-<header>Hello</header>
-<body> </body>
-<footer>© 2024 ObjednanieZubara.sk | Všetky práva vyhradené</footer>
+<body>
+    <h1>Vyhľadaj zubára</h1>
+    <div class="input-group">
+        <input class="form-control" type="text" name="search" placeholder="meno zubára">
+        <input type="hidden" name="iframe" id="iframe" value="">
+        <div class="input-group-btn">
+            <button class="btn btn-default" type="submit">Vyhľadať</button>
+        </div>
+    </div>
+
+    <img class="image-z" src="/images/zubar.jpg" alt="Dentist" />
+
+    <footer>© 2024 ObjednanieZubara.sk | Všetky práva vyhradené</footer>
+</body>
+</html>
+
