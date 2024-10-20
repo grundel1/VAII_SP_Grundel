@@ -1,0 +1,42 @@
+﻿@page "/login"
+@attribute [StreamRendering]
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+
+<body>
+<div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
+    <h1 class="page-title">Prihlásenie</h1>
+    <hr>
+    <form action="/login" id="frm-loginForm">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="Email">
+        </div>
+        <div class="form-group">
+            <label>Heslo</label>
+            <input type="password" name="password" placeholder="Heslo">
+        </div>
+        <div class="form-group">
+            <p><a class="link" title="Zabudli ste heslo?" href="">Zabudli ste heslo?</a></p>
+        </div>
+        <div class="form-group">
+            <p style="text-align: center; opacity:1">
+                <strong>
+                    Ak nemáte vytvorený účet, <a class="link underline" href="/registracia">registrujte sa</a>.
+                </strong>
+            </p>
+        </div>
+        <div class="form-group">
+            <input class="btn" value="Prihlásiť" >
+        </div>
+        </form>
+</div>
+</body>
+
+</html>
+
