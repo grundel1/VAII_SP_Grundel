@@ -30,7 +30,6 @@ h1 {
 }
 
 .input-group {
-    z-index: 2;
     float: left;
     margin-bottom: 20px;
     left: 52%;
@@ -68,12 +67,3 @@ h1 {
         color: white;
     }
 
-footer {
-    position: fixed;
-    width: 100%;
-    text-align: center;
-    padding: 10px;
-    background-color: lightgray;
-    bottom: 0;
-    left: 0;
-}

@@ -1,4 +1,4 @@
-/* Pre navbar */
+/* navbar */
 .top-row {
     height: 3.5rem;
     background-color: blue;
@@ -62,7 +62,7 @@
 @media (max-width: 768px) {
     /* Zobrazi hamburgerové tlaèidlo na menších obrazovkách */
     .navbar-toggler {
-        display: inline-block; /* Zobrazí sa iba na malıch obrazovkách */
+        display: inline-block;
     }
 
     /* Zobrazi skryté menu pri zapnutí checkboxu */
@@ -98,7 +98,7 @@
 @media (min-width: 769px) {
     /* Na väèších obrazovkách skryjeme hamburgerové menu */
     .navbar-toggler {
-        display: none; /* Skryjeme ho na ve¾kıch obrazovkách */
+        display: none; 
     }
 
     /* Zobrazíme normálne menu */

@@ -2,16 +2,26 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Full height for proper layout */
+    height: 100vh;
 }
 
 main {
     flex: 1;
 }
 
+footer {
+    position: fixed;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    background-color: lightgray;
+    bottom: 0;
+    left: 0;
+}
+
 .top-row {
-    background-color: rgba(0, 0, 0, 0.4); /* Rovnaký vzh¾ad ako predtým */
-    justify-content: center; /* Položky budú zarovnané do stredu */
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center; 
     height: 3.5rem;
     display: flex;
     align-items: center;
