@@ -7,89 +7,56 @@
     <title>Registrácia</title>
 </head>
 <body>
-    <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3 blue-border">
+    <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
         <header>
             <h1 class="page-title">Registrácia</h1>
         </header>
         <div>
+            <a href=""><i class="pacient" aria-hidden="true"></i> Pacient</a>
+            <br/>
+                <a href=""><i class="zubar"></i> Zubár </a>
 
-            <!-- Nav tabs -->
-            <ul class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-user" aria-hidden="true"></i> Pacient</a></li>
-                <li role=""><a aria-controls="" role="" data-toggle="" href="/pre-lekarov"><i class="fa fa-user-md" aria-hidden="true"></i> Lekár</a></li>
-            </ul>
-
-            <!-- Tab panes -->
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="home">
                     <br>
-                    <form action="/registration/" method="post" novalidate="" id="frm-registrationForm">
+                    <form action="/registracia">
                         <div class="form-group">
-                            <label for="frm-registrationForm-name">Meno a priezvisko pacienta</label>
-                            <input type="text" name="name" class="form-control" placeholder="Meno a priezvisko pacienta" id="frm-registrationForm-name" required="" data-nette-rules="[{&quot;op&quot;:&quot;:filled&quot;,&quot;msg&quot;:&quot;Povinná položka&quot;}]" data-lfv-initialized="true" data-lfv-message-id="frm-registrationForm-name_message">
-                            <span id="frm-registrationForm-name_message"></span>
+                            <label for="frm-registrationForm-name" id="frm-registrationForm-name">Meno a priezvisko pacienta</label>
+                            <input type="text" name="name" class="form-control" placeholder="Meno a priezvisko pacienta" id="frm-registrationForm-name">
                         </div>
+
                         <div class="form-group">
                             <label for="frm-registrationForm-email">Email</label>
-                            <input type="email" name="email" placeholder="Email" class="form-control validate-email" id="frm-registrationForm-email" required="" data-nette-rules="[{&quot;op&quot;:&quot;:filled&quot;,&quot;msg&quot;:&quot;Povinná položka&quot;},{&quot;op&quot;:&quot;:email&quot;,&quot;msg&quot;:&quot;Nesprávny formát emailu&quot;}]" data-lfv-initialized="true" data-lfv-message-id="frm-registrationForm-email_message">
-                            <span id="frm-registrationForm-email_message"></span>
+                            <input type="email" name="email" placeholder="Email" class="form-control validate-email">
                         </div>
 
                         <div class="form-group">
                             <label for="frm-registrationForm-phone">Telefón</label>
-                            <input type="text" name="phone" class="form-control validate-phone" placeholder="Telefón" pattern="[0-9]*" id="frm-registrationForm-phone" required="" data-nette-rules="[{&quot;op&quot;:&quot;:filled&quot;,&quot;msg&quot;:&quot;Povinná položka&quot;},{&quot;op&quot;:&quot;:minLength&quot;,&quot;msg&quot;:&quot;Nesprávne zadané telefónne číslo&quot;,&quot;arg&quot;:10}]" data-lfv-initialized="true" data-lfv-message-id="frm-registrationForm-phone_message">
-                            <p><i class="fa fa-exclamation-triangle" style="color: red"></i> Telefónne číslo zadajte vo formáte 09xxyyyyyy</p>
-                            <span id="frm-registrationForm-phone_message"></span>
+                            <input type="text" name="phone" class="form-control validate-phone" placeholder="Telefón">
                         </div>
 
                         <div class="form-group">
                             <label for="insurance">Poisťovňa</label>
-                            <select name="insurance_id" class="form-control" id="insurance" data-lfv-initialized="true" data-lfv-message-id="insurance_message"><option value="">Vyberte</option><option value="3">Všeobecná zdravotná poisťovňa, a.s.</option><option value="2">Union zdravotná poisťovňa, a.s.</option><option value="1">DÔVERA zdravotná poisťovňa, a.s.</option><option value="5">Poistenec Európskej únie</option><option value="4">Bez poisťovne</option></select>
-                            <span id="insurance_message"></span>
+                            <select name="insurance_id" class="form-control"><option value="">Vyberte</option><option value="3">Všeobecná zdravotná poisťovňa, a.s.</option><option value="2">Union zdravotná poisťovňa, a.s.</option><option value="1">DÔVERA zdravotná poisťovňa, a.s.</option><option value="4">Bez poisťovne</option></select>
                         </div>
-
-
-                        <input type="hidden" name="special_code" placeholder="Kontrolná otázka: Koľko je dva plus tri?" value="5" data-lfv-initialized="true" data-lfv-message-id="_message">
-
-                        <div class="form-group">
-
-                            <div class="form-group">
-                                <input type="hidden" name="description" id="description" value="" data-lfv-initialized="true" data-lfv-message-id="description_message">
-                                <span id="description_message"></span>
-                            </div>
-                        </div>
-
 
 
                         <div class="form-group">
                             <label for="frm-registrationForm-conditions" class="no-wrap d-inline-block">
-                                <input type="checkbox" id="frm-registrationForm-conditions" data-lfv-initialized="true" data-lfv-message-id="frm-registrationForm-conditions_message" name="conditions" required="" data-nette-rules="[{&quot;op&quot;:&quot;:filled&quot;,&quot;msg&quot;:&quot;Povinná položka&quot;}]">
-                                Oboznámil som sa s
-                                <a target="_blank" class="link" href="/p/obchodne-podmienky">obchodnými podmienkami</a>
+                                <input type="checkbox" name="conditions"> 
+                                Oboznámil som sa s <a target="_blank" class="link" href="">so všeobecnými pravidlami.</a>
                             </label>
-                            <span id="frm-registrationForm-conditions_message"></span>
 
                         </div>
 
-                        <div class="form-group clearfix">
-                            <section>
-                                <input type="submit" name="_submit" class="btn login-btns pull-right btn-default" value="Registrovať" data-lfv-initialized="true" data-lfv-message-id="_message_1">
-                                <!-- /.form-group -->
-                                <span id="_message_1"></span>
-                            </section>
+                        <div class="form-group">
+                            <input type="submit" name="_submit" id="_submit" class="btn" value="Registrovať">
                         </div>
 
-                        <input type="hidden" name="redirect" value="" data-lfv-initialized="true" data-lfv-message-id="_message_2"><input type="hidden" name="_do" value="registrationForm-submit" data-lfv-initialized="true" data-lfv-message-id="_message_3"><span id="_message"></span><span id="_message_2"></span><span id="_message_3"></span>
                     </form>
-
                 </div>
             </div>
-
         </div>
-
-
-
-
     </div>
 </body>
 </html>

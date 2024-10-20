@@ -4,7 +4,7 @@
 
 .col-md-4, col-sm-6, col-md-offset-4, col-sm-offset-3 {
     position: fixed;
-    left: 40%;
+    left: 43%;
     margin-left: -200px;
 }
 
@@ -27,4 +27,5 @@
         background-color: #007bff;
         color: white;
     }
+
 

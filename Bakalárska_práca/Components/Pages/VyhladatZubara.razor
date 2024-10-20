@@ -6,5 +6,53 @@
     <meta charset="UTF-8">
     <title>Vyhľadanie zubára</title>
 </head>
-<body></body>
+<body>
+<h1>Vyhľadaj lekára pomocou filtrov a objednaj sa</h1>
+<form class="filter">
+   
+    <div class="meno">
+            <label>Meno lekára</label>
+        <input name="meno_lekara" type="text" value="">
+    </div>
+
+    <div class="sel-spec">
+        <label>Špecializácia</label>
+        <select name="typ_specializacie">
+            <option value="" selected="">Všetky</option>
+            <option value="1">Stomatochirurgia</option>
+            <option value="2">Parodontológia</option>
+            <option value="3">Ortodoncia</option>
+            <option value="4">Pedostomatológia</option>
+            <option value="5">Všeobecné pre dospelých</option>
+            <option value="6">Všeobecné pre deti</option>
+        </select>
+    </div>
+
+    
+    <div class="sel-kraj">
+            <label>Kraj</label>
+        <select name="typ_kraju">
+            <option value="" selected="">Celé Slovensko</option>
+            <option value="10">Banská Bystrica</option>
+            <option value="20">Bratislava</option>
+            <option value="30">Košice</option>
+            <option value="40">Nitra</option>
+            <option value="50">Prešov</option>
+            <option value="60">Trenčín</option>
+            <option value="70">Trnava</option>
+            <option value="80">Žilina</option>
+        </select>
+    </div>
+</form>
+
+<div class="form-group">
+    <input type="submit" name="_submit" class="btn-hladat" value="Registrovať">
+</div>
+    <hr>
+<div class="box" id="dataBox">
+    <p>Načítané dáta sa zobrazia tu.</p>
+</div>
+
+</body>
 </html>
+

@@ -1,2 +1,27 @@
 ﻿body {
+    display: block;
 }
+
+.col-md-4, col-sm-6, col-md-offset-4, col-sm-offset-3, tab-content {
+    position: fixed;
+    left: 43%;
+    margin-left: -200px;
+}
+
+.page-title {
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 5px;
+}
+
+.btn {
+    border: solid;
+}
+
+    .btn:hover {
+        border: solid;
+        background-color: #007bff;
+        color: white;
+    }
