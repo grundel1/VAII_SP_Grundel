@@ -1,4 +1,6 @@
 using Bakalárska_práca.Components;
+using Bakalárska_práca.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bakalárska_práca
 {
@@ -12,7 +14,12 @@ namespace Bakalárska_práca
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            var app = builder.Build();
+            builder.Services.AddDbContext<KlinikaContext>(options =>
+            {
+                options.UseSqlServer("Server=LAPTOP-140TCCMK\\SQLEXPRESS;Database=ZubnyLekariDB;Trusted_Connection=True;TrustServerCertificate=True;");
+            });
+
+        var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
