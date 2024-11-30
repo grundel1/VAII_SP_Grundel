@@ -14,11 +14,6 @@ namespace Bakalárska_práca
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            //builder.Services.AddDbContext<KlinikaContext>(options =>
-            //{
-            //    options.UseSqlServer("Server=LAPTOP-140TCCMK\\SQLEXPRESS;Database=ZubnyLekariDB;Trusted_Connection=True;TrustServerCertificate=True;");
-            //});
-
             builder.Services.AddDbContext<KlinikaContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
