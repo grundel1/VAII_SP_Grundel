@@ -14,8 +14,8 @@ namespace Bakalárska_práca
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            builder.Services.AddDbContext<KlinikaContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddDbContext<ClinicContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DentistSystem")));
 
             var app = builder.Build();
 
