@@ -8,7 +8,12 @@ namespace Bakalárska_práca
     {
         public static void Main(string[] args)
         {
+            
             var builder = WebApplication.CreateBuilder(args);
+
+            var optionsDb = new DbContextOptionsBuilder<ClinicContext>()
+                .UseSqlServer(builder.Configuration.GetConnectionString("DentistSystem"))
+                .Options;
 
             // Add services to the container.
             builder.Services.AddRazorComponents()
@@ -17,7 +22,9 @@ namespace Bakalárska_práca
             builder.Services.AddDbContext<ClinicContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DentistSystem")));
 
+
             var app = builder.Build();
+
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -35,7 +42,21 @@ namespace Bakalárska_práca
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
 
+            using ClinicContext context = new ClinicContext(optionsDb);
+
+            Dentist dentist = new Dentist()
+            {
+                Address = "Palackého 14",
+                City = "Trenčín",
+                Name = "Sam",
+                Surname = "Gründel",
+            };
+            context.Add(dentist);
+            context.SaveChanges();
+
             app.Run();
+
         }
     }
 }
+

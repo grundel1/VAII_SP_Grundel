@@ -9,6 +9,12 @@ namespace Bakalárska_práca.Model
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<OrderInfo> OrderInfos { get; set; } = null!;
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("DentistSystem");
+        }
+
+        
         public ClinicContext(DbContextOptions options) : base(options)
         {
             
