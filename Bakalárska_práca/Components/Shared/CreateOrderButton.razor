@@ -1,0 +1,13 @@
+﻿@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<button class="btn btn-primary" @onclick="CreateOrder">Create Order</button>
+
+@code {
+    private void CreateOrder()
+    {
+        NavigationManager.NavigateTo("/edit-order");
+    }
+}
+
+

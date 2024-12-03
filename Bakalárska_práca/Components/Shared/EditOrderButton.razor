@@ -1,0 +1,16 @@
+﻿@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<button class="btn btn-primary" @onclick="EditOrder">Edit Order</button>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private void EditOrder()
+    {
+        NavigationManager.NavigateTo($"/edit-order/{Id}");
+    }
+}
+
+

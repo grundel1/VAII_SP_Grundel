@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Bakalárska_práca.Model;
+using Microsoft.EntityFrameworkCore;
 
-namespace Bakalárska_práca.Model
+namespace Bakalárska_práca.Data
 {
     public class ClinicContext : DbContext
     {
@@ -14,10 +15,10 @@ namespace Bakalárska_práca.Model
             optionsBuilder.UseSqlServer("Server=LAPTOP-140TCCMK\\SQLEXPRESS;Database=DentistSystemDB;Trusted_Connection=True;TrustServerCertificate=True;");
         }
 
-        
+
         public ClinicContext(DbContextOptions options) : base(options)
         {
-            
+
         }
     }
 }

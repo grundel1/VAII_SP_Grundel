@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bakalárska_práca.Migrations
 {
     [DbContext(typeof(ClinicContext))]
-    [Migration("20241202202617_updateDentist2")]
-    partial class updateDentist2
+    [Migration("20241203151854_updateOrders")]
+    partial class updateOrders
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,6 +66,10 @@ namespace Bakalárska_práca.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("OrderPlaced")
                         .HasColumnType("datetime2");

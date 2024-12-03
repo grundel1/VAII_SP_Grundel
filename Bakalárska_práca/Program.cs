@@ -1,5 +1,7 @@
 using Bakalárska_práca.Components;
+using Bakalárska_práca.Data;
 using Bakalárska_práca.Model;
+using Bakalárska_práca.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bakalárska_práca
@@ -22,6 +24,8 @@ namespace Bakalárska_práca
             builder.Services.AddDbContext<ClinicContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DentistSystem")));
 
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddControllers();
 
             var app = builder.Build();
 
@@ -36,23 +40,25 @@ namespace Bakalárska_práca
 
             app.UseHttpsRedirection();
 
+            app.MapControllers();
+
             app.UseStaticFiles();
             app.UseAntiforgery();
 
             app.MapRazorComponents<App>()
                 .AddInteractiveServerRenderMode();
 
-            using ClinicContext context = new ClinicContext(optionsDb);
+            //using ClinicContext context = new ClinicContext(optionsDb);
 
-            Dentist dentist = new Dentist()
-            {
-                Address = "Palackého 14",
-                City = "Trenčín",
-                Name = "Sam",
-                Surname = "Gründel",
-            };
-            context.Add(dentist);
-            context.SaveChanges();
+            //Dentist dentist = new Dentist()
+            //{
+            //    Address = "Palackého 14",
+            //    City = "Trenčín",
+            //    Name = "Sam",
+            //    Surname = "Gründel",
+            //};
+            //context.Add(dentist);
+            //context.SaveChanges();
 
             app.Run();
 
