@@ -1,8 +1,12 @@
-﻿namespace Bakalárska__práca.Shared.Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Bakalárska__práca.Shared.Model
 {
     public class Order
     {
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Políčko názov nesmie byť prázdne.")]
         public required string Name { get; set; }
         public DateTime OrderPlaced { get; set; }
         //public int UserId { get; set; }

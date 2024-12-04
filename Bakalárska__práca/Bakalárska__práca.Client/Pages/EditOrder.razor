@@ -7,20 +7,26 @@
 
 @if(Id == null)
 {
-    <h3>Create Order</h3>
+    <h3>Vytvor objednávku</h3>
 }
 else
 {
-    <h3>Edit @order.Name</h3>
+    <h3>Uprav @order.Name</h3>
 }
 
-<EditForm Model="order" OnSubmit="HandleSubmit">
-    <label>Name</label>
-    <InputText @bind-Value="order.Name">@order.Name</InputText>
-    <button type="submit" class="btn btn-primary">Submit</button>
-    @if(Id != null)
+<EditForm Model="order" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator/>
+    <div>
+        <label>Názov</label>
+        <InputText @bind-Value="order.Name" />
+        <ValidationMessage For="@(() => order.Name)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Potvrdiť</button>
+
+    @if (Id != null)
     {
-        <button @onclick="DeleteOrder" type="button" class="btn btn-danger">Delete</button>
+        <button @onclick="DeleteOrder" type="button" class="btn btn-danger">Zmazať</button>
     }
 </EditForm>
 
@@ -29,9 +35,57 @@ else
     public int? Id { get; set; }
     Order order { get; set; } = new Order { Name = string.Empty };
 
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id.HasValue)
+        {
+            order = await OrderService.GetOrderById(Id.Value);
+        }
+        else
+        {
+            order = new Order { Name = string.Empty };
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (Id == null)
+        {
+            await OrderService.AddOrder(order);
+        }
+        else
+        {
+            await OrderService.EditOrder((int)Id, order);
+        }
+    }
+
+    async Task DeleteOrder()
+    {
+        await OrderService.DeleteOrder((int)Id);
+    }
+
+    
+}
+
+
+@* <EditForm Model="order" OnValidSubmit="HandleSubmit">
+    <label>Name</label>
+    <InputText @bind-Value="order.Name">@order.Name</InputText>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <ValidationMessage For="@(() => order.Name)" />
+    @if(Id != null)
+    {
+        <button @onclick="DeleteOrder" type="button" class="btn btn-danger">Delete</button>
+    }
+</EditForm>
+
+@code {
+    [Parameter] public int? Id { get; set; }
+    Order order { get; set; } = new Order { Name = string.Empty };
+
 
     protected override async Task OnParametersSetAsync()
-    { 
+    {
         if (Id.HasValue)
         {
             order = await OrderService.GetOrderById(Id.Value);
@@ -49,7 +103,7 @@ else
             return;
         }
 
-        if(Id == null)
+        if (Id == null)
         {
             await OrderService.AddOrder(order);
         }
@@ -64,4 +118,5 @@ else
         await OrderService.DeleteOrder((int)Id);
     }
 
-}
+} *@
+

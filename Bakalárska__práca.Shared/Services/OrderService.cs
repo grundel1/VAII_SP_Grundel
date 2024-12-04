@@ -15,8 +15,6 @@ namespace Bakalárska__práca.Shared.Services
 
         public async Task<List<Order>> GetAllOrders()
         {
-            await Task.Delay(1000);
-
             var orders = await _context.Orders.ToListAsync();
             return orders;
         }
