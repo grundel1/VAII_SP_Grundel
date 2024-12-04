@@ -29,6 +29,7 @@ else
     public int? Id { get; set; }
     Order order { get; set; } = new Order { Name = string.Empty };
 
+
     protected override async Task OnParametersSetAsync()
     { 
         if (Id.HasValue)
@@ -43,7 +44,13 @@ else
 
     async Task HandleSubmit()
     {
-        if(Id == null) {
+        if (order.Name == string.Empty)
+        {
+            return;
+        }
+
+        if(Id == null)
+        {
             await OrderService.AddOrder(order);
         }
         else
