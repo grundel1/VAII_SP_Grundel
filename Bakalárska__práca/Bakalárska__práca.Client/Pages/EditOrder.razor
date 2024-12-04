@@ -31,7 +31,14 @@ else
 
     protected override async Task OnParametersSetAsync()
     { 
-        order = await OrderService.GetOrderById((int)Id);
+        if (Id.HasValue)
+        {
+            order = await OrderService.GetOrderById(Id.Value);
+        }
+        else
+        {
+            order = new Order { Name = string.Empty };
+        }
     }
 
     async Task HandleSubmit()
