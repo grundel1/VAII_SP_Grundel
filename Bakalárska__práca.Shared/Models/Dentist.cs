@@ -1,4 +1,4 @@
-﻿namespace Bakalárska__práca.Model
+﻿namespace Bakalárska__práca.Shared.Model
 {
     public enum Region
     {

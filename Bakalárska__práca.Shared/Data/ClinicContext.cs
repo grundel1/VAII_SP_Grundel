@@ -1,7 +1,7 @@
-﻿using Bakalárska__práca.Model;
+﻿using Bakalárska__práca.Shared.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bakalárska__práca.Data
+namespace Bakalárska__práca.Shared.Data
 {
     public class ClinicContext : DbContext
     {

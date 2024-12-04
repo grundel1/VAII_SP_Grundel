@@ -1,6 +1,6 @@
-﻿using Bakalárska__práca.Model;
+﻿using Bakalárska__práca.Shared.Model;
 
-namespace Bakalárska__práca.Services
+namespace Bakalárska__práca.Shared.Services
 {
     public interface IOrderService
     {

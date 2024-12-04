@@ -2,6 +2,8 @@ using Bakalárska__práca.Client.Pages;
 using Bakalárska__práca.Components;
 using Bakalárska__práca.Components.Account;
 using Bakalárska__práca.Data;
+using Bakalárska__práca.Shared.Data;
+using Bakalárska__práca.Shared.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +14,19 @@ var optionsDb = new DbContextOptionsBuilder<ClinicContext>()
     .UseSqlServer(builder.Configuration.GetConnectionString("DentistSystem"))
     .Options;
 
+builder.Services.AddControllers();
+
+builder.Services.AddScoped(http => new HttpClient
+{
+    BaseAddress = new Uri(builder.Configuration.GetSection("BaseUri").Value!),
+});
+
 builder.Services.AddDbContext<ClinicContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DentistSystem"));
 });
+
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -62,6 +73,8 @@ else
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

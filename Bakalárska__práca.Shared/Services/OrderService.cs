@@ -1,8 +1,8 @@
-﻿using Bakalárska__práca.Data;
-using Bakalárska__práca.Model;
+﻿using Bakalárska__práca.Shared.Data;
+using Bakalárska__práca.Shared.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace Bakalárska__práca.Services
+namespace Bakalárska__práca.Shared.Services
 {
     public class OrderService : IOrderService
     {
@@ -15,6 +15,8 @@ namespace Bakalárska__práca.Services
 
         public async Task<List<Order>> GetAllOrders()
         {
+            await Task.Delay(1000);
+
             var orders = await _context.Orders.ToListAsync();
             return orders;
         }
@@ -33,23 +35,23 @@ namespace Bakalárska__práca.Services
 
         public async Task<Order> EditOrder(int id, Order order)
         {
-            var dbGame = await _context.Orders.FindAsync(id);
-            if (dbGame != null)
+            var dbOrder = await _context.Orders.FindAsync(id);
+            if (dbOrder != null)
             {
-                dbGame.Name = order.Name;
+                dbOrder.Name = order.Name;
                 await _context.SaveChangesAsync();
-                return dbGame;
+                return dbOrder;
             }
 
-            throw new Exception("Game not found!");
+            throw new Exception("Order not found!");
         }
 
         public async Task<bool> DeleteOrder(int id)
         {
-            var dbGame = await _context.Orders.FindAsync(id);
-            if (dbGame != null)
+            var dbOrder = await _context.Orders.FindAsync(id);
+            if (dbOrder != null)
             {
-                _context.Remove(dbGame);
+                _context.Remove(dbOrder);
                 await _context.SaveChangesAsync();
                 return true;
             }

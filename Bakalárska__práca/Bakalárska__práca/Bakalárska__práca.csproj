@@ -12,6 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <_ContentIncludedByDefault Remove="appsettings.Development.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Bakalárska__práca.Client\Bakalárska__práca.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.2" />
@@ -21,6 +25,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
     <Content Update="Components\Pages\Error.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
