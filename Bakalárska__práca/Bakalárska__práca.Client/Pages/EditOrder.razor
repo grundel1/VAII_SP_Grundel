@@ -2,6 +2,7 @@
 @page "/edit-order/{id:int}"
 @using Bakalárska__práca.Shared.Model
 @using Bakalárska__práca.Shared.Services
+@inject NavigationManager NavigationManager
 @inject IOrderService OrderService
 @rendermode InteractiveAuto
 
@@ -52,16 +53,19 @@ else
         if (Id == null)
         {
             await OrderService.AddOrder(order);
+            NavigationManager.NavigateTo("/orderList");
         }
         else
         {
             await OrderService.EditOrder((int)Id, order);
+            NavigationManager.NavigateTo("/orderList");
         }
     }
 
     async Task DeleteOrder()
     {
         await OrderService.DeleteOrder((int)Id);
+        NavigationManager.NavigateTo("/orderList");
     }
 
     
