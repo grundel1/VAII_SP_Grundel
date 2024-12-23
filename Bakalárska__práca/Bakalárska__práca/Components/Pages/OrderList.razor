@@ -1,34 +1,74 @@
 ﻿@page "/orderList"
 @inject IOrderService OrderService
+@inject NavigationManager NavigationManager
 @attribute [StreamRendering]
 
-<h3>Objednávky</h3>
+<h3>Vaše objednávky</h3>
 
- @if (orders == null)
+@if (orders == null)
 {
-    <span>Loading...</span>
+    <span class="loading">Loading...</span>
 }
 else if (orders.Count == 0)
 {
-    <span>Nenašli sa žiadne objednávky.</span>
+    <span class="no-orders">Nenašli sa žiadne objednávky.</span>
 } 
 else
 {
-     <ul>
+    <ul class="order-list">
         @foreach (var order in orders)
         {
-            <li>@order.Name <EditOrderButton Id="order.Id"/></li>
+            <li class="order-item">
+                <span class="order-name">@order.Name</span>
+                <EditOrderButton Id="@order.Id" />
+                <button @onclick="() => ConfirmDeleteOrder(order.Id)" type="button" class="btn btn-danger btn-sm">Zmazať</button>
+            </li>
         }
     </ul> 
 }
 <CreateOrderButton />
 
+<!-- Potvrdzovacie dialógové okno -->
+@if (isConfirmDialogVisible)
+{
+    <div class="confirm-dialog">
+        <div class="dialog-content">
+            <p>Vážne chcete zmazať túto objednávku?</p>
+            <div class="dialog-actions">
+                <button @onclick="DeleteConfirmedOrder" class="btn btn-danger">Áno</button>
+                <button @onclick="CancelDelete" class="btn btn-secondary">Zrušiť</button>
+            </div>
+        </div>
+    </div>
+}
+
 @code
 {
     List<Order>? orders = null;
+    bool isConfirmDialogVisible = false;
+    int orderToDeleteId;
 
     protected override async Task OnInitializedAsync()
     {
         orders = await OrderService.GetAllOrders();
+    }
+
+    void ConfirmDeleteOrder(int id)
+    {
+        isConfirmDialogVisible = true;
+        orderToDeleteId = id;
+    }
+
+    async Task DeleteConfirmedOrder()
+    {
+        isConfirmDialogVisible = false;
+        await OrderService.DeleteOrder(orderToDeleteId);
+        orders = await OrderService.GetAllOrders(); // Obnovíme zoznam po zmazaní
+    }
+
+    void CancelDelete()
+    {
+        isConfirmDialogVisible = false;
+        orderToDeleteId = 0;
     }
 }

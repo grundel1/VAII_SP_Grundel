@@ -6,7 +6,7 @@ namespace Bakalárska__práca.Shared.Model
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Políčko názov nesmie byť prázdne.")]
+        [Required(ErrorMessage = "Políčko názvu nesmie byť prázdne.")]
         public required string Name { get; set; }
         public DateTime OrderPlaced { get; set; }
         //public int UserId { get; set; }

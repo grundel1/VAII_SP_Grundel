@@ -1,4 +1,5 @@
-﻿using Bakalárska__práca.Shared.Data;
+﻿using System.ComponentModel.DataAnnotations;
+using Bakalárska__práca.Shared.Data;
 using Bakalárska__práca.Shared.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,9 @@ namespace Bakalárska__práca.Shared.Services
 
         public async Task<Order> AddOrder(Order order)
         {
+            var contextValidation = new ValidationContext(order);
+            Validator.ValidateObject(order, contextValidation, validateAllProperties: true);
+
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();
             return order;

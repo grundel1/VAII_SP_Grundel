@@ -24,11 +24,6 @@ else
     </div>
 
     <button type="submit" class="btn btn-primary">Potvrdiť</button>
-
-    @if (Id != null)
-    {
-        <button @onclick="DeleteOrder" type="button" class="btn btn-danger">Zmazať</button>
-    }
 </EditForm>
 
 @code {
@@ -60,12 +55,6 @@ else
             await OrderService.EditOrder((int)Id, order);
             NavigationManager.NavigateTo("/orderList");
         }
-    }
-
-    async Task DeleteOrder()
-    {
-        await OrderService.DeleteOrder((int)Id);
-        NavigationManager.NavigateTo("/orderList");
     }
 
     
