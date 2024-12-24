@@ -24,12 +24,32 @@ else
     </div>
 
     <button type="submit" class="btn btn-primary">Potvrdiť</button>
+    @if (Id != null)
+    {
+        <button @onclick="ShowDialog" type="button" class="btn btn-danger">Zmazať</button>
+    }
 </EditForm>
+
+
+
+@if (_dialogVisible)
+{
+    <div class="dialog-overlay">
+        <div class="dialog-box">
+            <h3>Naozaj chcete vymazať objednávku?</h3>
+            <div class="dialog-actions">
+                <button class="confirm-button" @onclick="ConfirmDelete">Áno, vymazať</button>
+                <button class="cancel-button" @onclick="CancelDelete">Zrušiť</button>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     [Parameter]
     public int? Id { get; set; }
     Order order { get; set; } = new Order { Name = string.Empty };
+    private bool _dialogVisible = false;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -57,7 +77,22 @@ else
         }
     }
 
-    
+    private void ShowDialog()
+    {
+        _dialogVisible = true;
+    }
+
+    async Task ConfirmDelete()
+    {
+        _dialogVisible = false;
+        await OrderService.DeleteOrder((int)Id);
+        NavigationManager.NavigateTo("/orderList");
+    }
+
+    private void CancelDelete()
+    {
+        _dialogVisible = false;
+    }
 }
 
 
