@@ -18,9 +18,19 @@ else
 <EditForm Model="order" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator/>
     <div>
-        <label>Názov</label>
-        <InputText @bind-Value="order.Name" />
+        @* <label>Názov</label> *@
+        @* <InputText @bind-Value="order.Name" /> *@
         <ValidationMessage For="@(() => order.Name)" />
+        <InputDate @bind-Value="order.OrderTime" min="@Today"></InputDate>
+        <InputSelect TValue="string" @bind-Value="order.Specialization">
+            <option value="Všetky">Všetky</option>
+            <option value="Stomatochirurgia">Stomatochirurgia</option>
+            <option value="Parodontológia">Parodontológia</option>
+            <option value="Ortodoncia">Ortodoncia</option>
+            <option value="Pedostomatológia">Pedostomatológia</option>
+            <option value="Všeobecné pre dospelých">Všeobecné pre dospelých</option>
+            <option value="Všeobecné pre deti">Všeobecné pre deti</option>
+        </InputSelect>
     </div>
 
     <button type="submit" class="btn btn-primary">Potvrdiť</button>
@@ -50,6 +60,7 @@ else
     public int? Id { get; set; }
     Order order { get; set; } = new Order { Name = string.Empty };
     private bool _dialogVisible = false;
+    private string Today => DateTime.Today.ToString("yyyy-MM-dd");
 
     protected override async Task OnParametersSetAsync()
     {
@@ -61,6 +72,11 @@ else
         {
             order = new Order { Name = string.Empty };
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        order.OrderPlaced = DateTime.Today;
     }
 
     async Task HandleSubmit()

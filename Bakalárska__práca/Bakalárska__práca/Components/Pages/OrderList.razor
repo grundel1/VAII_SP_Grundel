@@ -4,6 +4,11 @@
 
 <h3>Vaše objednávky</h3>
 
+<div class="create-btn">
+    <CreateOrderButton />
+</div>
+
+
 @if (orders == null)
 {
     <span class="loading">Loading...</span>
@@ -18,14 +23,16 @@ else
         @foreach (var order in orders)
         {
             <li class="order-item">
-                <span class="order-name">@order.Name</span>
+                <span class="order-name">@order.Specialization</span>
+                @* <span class="order-spec">@order.Specialization.ToString()</span> *@
+                <span class="order-date">Dátum vyšetrenia: @order.OrderTime</span>
                 <EditOrderButton Id="@order.Id" />
                 <DeleteOrderButton Id="@order.Id"/>
             </li>
         }
     </ul> 
 }
-<CreateOrderButton />
+
 
 
 @if (isConfirmDialogVisible)

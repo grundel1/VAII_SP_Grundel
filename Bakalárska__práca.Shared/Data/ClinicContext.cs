@@ -12,7 +12,7 @@ namespace Bakalárska__práca.Shared.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=LAPTOP-140TCCMK\\SQLEXPRESS;Database=DentistSystemDB;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=LAPTOP-140TCCMK\\SQLEXPRESS;Database=DentistSystemDB;Trusted_Connection=True;TrustServerCertificate=True;", b => b.MigrationsAssembly("Bakalárska__práca"));
         }
 
 
