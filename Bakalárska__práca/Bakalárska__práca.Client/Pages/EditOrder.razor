@@ -18,10 +18,11 @@ else
 <EditForm Model="order" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator/>
     <div>
-        @* <label>Názov</label> *@
-        @* <InputText @bind-Value="order.Name" /> *@
+        <label>Názov</label>
+        <InputText @bind-Value="order.Name" />
         <ValidationMessage For="@(() => order.Name)" />
         <InputDate @bind-Value="order.OrderTime" min="@Today"></InputDate>
+        <input type="time" @bind="order.Time"></input>
         <InputSelect TValue="string" @bind-Value="order.Specialization">
             <option value="Všetky">Všetky</option>
             <option value="Stomatochirurgia">Stomatochirurgia</option>
@@ -81,6 +82,9 @@ else
 
     async Task HandleSubmit()
     {
+        order.OrderTime = order.OrderTime.Date.Add(order.Time.TimeOfDay);
+
+
         if (Id == null)
         {
             await OrderService.AddOrder(order);
@@ -109,6 +113,11 @@ else
     {
         _dialogVisible = false;
     }
+
+    private readonly TimeSpan OpeningTime = new TimeSpan(8, 0, 0); // 8:00
+    private readonly TimeSpan ClosingTime = new TimeSpan(18, 0, 0); // 18:00
+
+    private bool IsValidTime() => order.Time.TimeOfDay >= OpeningTime && order.Time.TimeOfDay <= ClosingTime;
 }
 
 

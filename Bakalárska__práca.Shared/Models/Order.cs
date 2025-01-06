@@ -11,7 +11,7 @@ namespace Bakalárska__práca.Shared.Model
 
         public DateTime OrderTime { get; set; }
         public DateTime OrderPlaced { get; set; }
-
+        public DateTime Time { get; set; }
         public string Specialization { get; set; }
         //public int UserId { get; set; }
         //public User User { get; set; } = null!;
