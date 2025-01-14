@@ -13,9 +13,11 @@ namespace Bakalárska__práca.Shared.Model
         public DateTime OrderPlaced { get; set; }
         public DateTime Time { get; set; }
         public string Specialization { get; set; }
+
+        //public Dentist Dentist { get; set; }
         //public int UserId { get; set; }
         //public User User { get; set; } = null!;
-        public ICollection<OrderInfo> OrderInfo { get; set; } = null!;
+        //public ICollection<OrderInfo> OrderInfo { get; set; } = null!;
 
         public Order()
         {

@@ -21,10 +21,11 @@ else
         <label>Názov</label>
         <InputText @bind-Value="order.Name" />
         <ValidationMessage For="@(() => order.Name)" />
+        <label>Dátum a čas</label>
         <InputDate @bind-Value="order.OrderTime" min="@Today"></InputDate>
-        <input type="time" @bind="order.Time"></input>
+        <input class="inputTime" type="time" @bind-value="order.Time" step="900" />
+        <label>Výber vyšetrenia</label>
         <InputSelect TValue="string" @bind-Value="order.Specialization">
-            <option value="Všetky">Všetky</option>
             <option value="Stomatochirurgia">Stomatochirurgia</option>
             <option value="Parodontológia">Parodontológia</option>
             <option value="Ortodoncia">Ortodoncia</option>
