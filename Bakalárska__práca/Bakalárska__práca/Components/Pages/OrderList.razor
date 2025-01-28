@@ -1,6 +1,8 @@
 ﻿@page "/orderList"
+@using Microsoft.AspNetCore.Authorization
 @inject IOrderService OrderService
 @attribute [StreamRendering]
+@attribute [Authorize(Roles = "User")]
 
 <h3>Vaše objednávky</h3>
 
