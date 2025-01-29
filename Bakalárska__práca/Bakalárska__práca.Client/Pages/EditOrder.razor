@@ -2,9 +2,11 @@
 @page "/edit-order/{id:int}"
 @using Bakalárska__práca.Shared.Model
 @using Bakalárska__práca.Shared.Services
+@using Microsoft.AspNetCore.Authorization
 @inject NavigationManager NavigationManager
 @inject IOrderService OrderService
 @rendermode InteractiveAuto
+@attribute [Authorize(Roles = "User")]
 
 @if(Id == null)
 {
