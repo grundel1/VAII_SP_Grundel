@@ -10,5 +10,6 @@
         public string City { get; set; } = null!;
         public string? Address { get; set; }
         public string? Phone { get; set; }
+        public List<Order> Orders { get; set; }
     }
 }

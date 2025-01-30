@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bakalárska__práca.Shared.Model
 {
@@ -13,8 +14,10 @@ namespace Bakalárska__práca.Shared.Model
         public DateTime OrderPlaced { get; set; }
         public DateTime Time { get; set; }
         public string Specialization { get; set; }
+        public int DentistId { get; set; }
+        [ForeignKey("DentistId")]
+        public Dentist Dentist { get; set; } = null!;
 
-        //public Dentist Dentist { get; set; }
         //public int UserId { get; set; }
         //public User User { get; set; } = null!;
         //public ICollection<OrderInfo> OrderInfo { get; set; } = null!;

@@ -15,6 +15,15 @@ namespace Bakalárska__práca.Shared.Data
             optionsBuilder.UseSqlServer("Server=LAPTOP-140TCCMK\\SQLEXPRESS;Database=DentistSystemDB;Trusted_Connection=True;TrustServerCertificate=True;", b => b.MigrationsAssembly("Bakalárska__práca"));
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Dentist)
+                .WithMany(d => d.Orders)
+                .HasForeignKey(o => o.DentistId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
+
 
         public ClinicContext(DbContextOptions<ClinicContext> options) : base(options)
         {

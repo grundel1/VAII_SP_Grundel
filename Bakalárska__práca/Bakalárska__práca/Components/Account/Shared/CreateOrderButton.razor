@@ -4,9 +4,12 @@
 <button class="btn btn-primary btn-create" @onclick="CreateOrder">Objednaj sa</button>
 
 @code {
+    [Parameter]
+    public int DentistId { get; set; }
+
     private void CreateOrder()
     {
-        NavigationManager.NavigateTo("/edit-order");
+        NavigationManager.NavigateTo($"/create-order/{DentistId}");
     }
 }
 

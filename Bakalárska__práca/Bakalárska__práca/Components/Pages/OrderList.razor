@@ -1,6 +1,7 @@
 ﻿@page "/orderList"
 @using Microsoft.AspNetCore.Authorization
 @inject IOrderService OrderService
+@inject IDentistService DentistService
 @attribute [StreamRendering]
 @attribute [Authorize(Roles = "User")]
 
@@ -22,6 +23,7 @@ else
             <li class="order-item">
                 <span class="order-name">@order.Specialization</span>
                 <span class="order-date">Dátum vyšetrenia: @order.OrderTime</span>
+                @* pridat aj meno zubara *@
                 <EditOrderButton Id="@order.Id" />
                 <DeleteOrderButton Id="@order.Id"/>
             </li>

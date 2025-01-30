@@ -1,5 +1,5 @@
-﻿@page "/edit-order"
-@page "/edit-order/{id:int}"
+﻿@page "/create-order"
+@page "/create-order/{dentistId:int}"
 @using Bakalárska__práca.Shared.Model
 @using Bakalárska__práca.Shared.Services
 @using Microsoft.AspNetCore.Authorization
@@ -9,7 +9,7 @@
 @rendermode InteractiveAuto
 @attribute [Authorize(Roles = "User")]
 
-@if(Id == null)
+@if (Id == null)
 {
     <h3>Vytvor objednávku</h3>
 }
@@ -19,16 +19,16 @@ else
 }
 
 <EditForm Model="order" OnValidSubmit="HandleSubmit">
-    <DataAnnotationsValidator/>
+    <DataAnnotationsValidator />
     <div>
         <label>Vybraný zubár:</label>
         <p>@dentistFullName</p>
         <label>Názov</label>
-        <InputText @bind-Value="order.Name"/>
-        <ValidationMessage For="@(() => order.Name)"/>
+        <InputText @bind-Value="order.Name" />
+        <ValidationMessage For="@(() => order.Name)" />
         <label>Dátum a čas</label>
         <InputDate @bind-Value="order.OrderTime" min="@Today"></InputDate>
-        <input class="inputTime" type="time" @bind-value="order.Time" step="900"/>
+        <input class="inputTime" type="time" @bind-value="order.Time" step="900" />
         <label>Výber vyšetrenia</label>
         <InputSelect TValue="string" @bind-Value="order.Specialization">
             <option value="Stomatochirurgia">Stomatochirurgia</option>
@@ -81,12 +81,6 @@ else
         {
             order = await OrderService.GetOrderById(Id.Value);
             DentistId = order.DentistId;
-
-            if (DentistId.HasValue)
-            {
-                var dentist = await DentistService.GetDentistById(DentistId.Value);
-                dentistFullName = $"{dentist.Name} {dentist.Surname}";
-            }
         }
         else
         {
@@ -108,7 +102,6 @@ else
     async Task HandleSubmit()
     {
         order.OrderTime = order.OrderTime.Date.Add(order.Time.TimeOfDay);
-
 
         if (Id == null)
         {
@@ -144,3 +137,4 @@ else
 
     private bool IsValidTime() => order.Time.TimeOfDay >= OpeningTime && order.Time.TimeOfDay <= ClosingTime;
 }
+

@@ -23,6 +23,11 @@ namespace Bakalárska__práca.Shared.Services
             return dentists;
         }
 
+        public async Task<Dentist> GetDentistById(int id)
+        {
+            return await _context.Dentists.FindAsync(id);
+        }
+
         public async Task<List<Dentist>> GetFilteredDentists(string? specialization, string? region)
         {
             var query = _context.Dentists.AsQueryable();
