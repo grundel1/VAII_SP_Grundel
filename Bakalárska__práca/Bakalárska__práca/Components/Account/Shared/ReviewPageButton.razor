@@ -1,0 +1,13 @@
+﻿@inject NavigationManager NavigationManager
+
+<button class="btn btn-primary btn-create" @onclick="GoToReviewPage">Recenzie</button>
+
+@code {
+    [Parameter] 
+    public int DentistId { get; set; }
+
+    private void GoToReviewPage()
+    {
+        NavigationManager.NavigateTo($"/review-page/{DentistId}");
+    }
+}

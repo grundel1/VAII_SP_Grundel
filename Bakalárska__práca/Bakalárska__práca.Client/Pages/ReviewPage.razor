@@ -1,0 +1,79 @@
+﻿@page "/review-page"
+@page "/review-page/{dentistId:int}"
+@using Bakalárska__práca.Shared.Model
+@using Bakalárska__práca.Shared.Models
+@using Bakalárska__práca.Shared.Services
+@inject NavigationManager NavigationManager
+@inject IReviewService ReviewService
+@inject IDentistService DentistService
+@rendermode InteractiveAuto
+
+<h3>Hodnotenie zubára</h3>
+
+@if (Dentist != null)
+{
+    <h4>@Dentist.Name @Dentist.Surname</h4>
+    <EditForm Model="review" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <div>
+            <label>Hodnotenie (1-5):</label>
+            <InputNumber @bind-Value="review.Rating" Min="1" Max="5" />
+        </div>
+        <div>
+            <label>Komentár:</label>
+            <InputTextArea @bind-Value="review.Comment" />
+        </div>
+        <button type="submit" class="btn btn-primary">Odoslať hodnotenie</button>
+    </EditForm>
+
+    <hr />
+    <h4>Recenzie:</h4>
+    @if (Reviews != null && Reviews.Any())
+    {
+        <ul>
+            @foreach (var rev in Reviews)
+            {
+                <li>
+                    <strong>Hodnotenie:</strong> @rev.Rating/5 <br />
+                    <strong>Komentár:</strong> @rev.Comment <br />
+                    <small>@rev.Date.ToShortDateString()</small>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Zatiaľ žiadne hodnotenia.</p>
+    }
+}
+else
+{
+    <p>Načítavam údaje...</p>
+}
+
+@code {
+    [Parameter]
+    public int? DentistId { get; set; }
+
+    private Dentist? Dentist { get; set; }
+    private List<Review> Reviews { get; set; } = new List<Review>();
+    private Review review { get; set; } = new Review();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (DentistId.HasValue)
+        {
+            Dentist = await DentistService.GetDentistById(DentistId.Value);
+            //Reviews = await ReviewService.GetReviewsByDentistId(DentistId.Value);
+            review.DentistId = DentistId.Value;
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        review.Date = DateTime.Now;
+        await ReviewService.AddReview(review);
+        //Reviews = await ReviewService.GetReviewsByDentistId(review.DentistId);
+        review = new Review { DentistId = review.DentistId };
+    }
+}

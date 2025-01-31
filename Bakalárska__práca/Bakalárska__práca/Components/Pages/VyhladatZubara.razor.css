@@ -86,3 +86,8 @@ hr {
     text-align: center;
     font-size: 1em; /* Zabezpečí rovnakú veľkosť písma */
 }
+
+.button-group {
+    display: flex;
+    gap: 10px;
+}

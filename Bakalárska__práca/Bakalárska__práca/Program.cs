@@ -28,6 +28,7 @@ builder.Services.AddDbContext<ClinicContext>(options =>
 
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IDentistService, DentistService>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()

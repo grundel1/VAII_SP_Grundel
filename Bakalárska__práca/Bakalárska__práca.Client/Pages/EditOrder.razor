@@ -15,7 +15,7 @@
 }
 else
 {
-    <h3>Uprav @order.Name</h3>
+    <h3>Uprav objednávku</h3>
 }
 
 <EditForm Model="order" OnValidSubmit="HandleSubmit">
@@ -23,14 +23,12 @@ else
     <div>
         <label>Vybraný zubár:</label>
         <p>@dentistFullName</p>
-        <label>Názov</label>
-        <InputText @bind-Value="order.Name"/>
-        <ValidationMessage For="@(() => order.Name)"/>
         <label>Dátum a čas</label>
         <InputDate @bind-Value="order.OrderTime" min="@Today"></InputDate>
         <input class="inputTime" type="time" @bind-value="order.Time" step="900"/>
         <label>Výber vyšetrenia</label>
         <InputSelect TValue="string" @bind-Value="order.Specialization">
+            <option value=""></option>
             <option value="Stomatochirurgia">Stomatochirurgia</option>
             <option value="Parodontológia">Parodontológia</option>
             <option value="Ortodoncia">Ortodoncia</option>
@@ -69,7 +67,7 @@ else
     [Parameter]
     public int? DentistId { get; set; }
 
-    Order order { get; set; } = new Order { Name = string.Empty };
+    Order order { get; set; } = new Order { };
     string dentistFullName = "Neznámy zubár";
 
     private bool _dialogVisible = false;
@@ -90,7 +88,7 @@ else
         }
         else
         {
-            order = new Order { Name = string.Empty };
+            order = new Order { };
             if (DentistId.HasValue)
             {
                 order.DentistId = DentistId.Value;

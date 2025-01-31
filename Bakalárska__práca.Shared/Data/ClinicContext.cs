@@ -1,4 +1,5 @@
 ﻿using Bakalárska__práca.Shared.Model;
+using Bakalárska__práca.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bakalárska__práca.Shared.Data
@@ -8,6 +9,7 @@ namespace Bakalárska__práca.Shared.Data
         public DbSet<Dentist> Dentists { get; set; } = null!;
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Order> Orders { get; set; } = null!;
+        public DbSet<Review> Reviews { get; set; } = null!;
         public DbSet<OrderInfo> OrderInfos { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

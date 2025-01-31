@@ -1,6 +1,7 @@
 ﻿@page "/vyhladatZubara"
 @inject IDentistService DentistService
 @attribute [StreamRendering]
+@rendermode InteractiveServer
 
 <head>
     <meta charset="UTF-8">
@@ -10,14 +11,14 @@
 <div class="container">
     <h1>Vyhľadaj svojho zubára a objednaj sa</h1>
 
-    <hr/>
+    <hr />
 
     @if (FilteredDentists == null)
-    { 
+    {
         <p class="loading">Načítavam dáta...</p>
     }
     else
-    { 
+    {
         <ul class="dentist-list">
             @foreach (var dentist in FilteredDentists)
             {
@@ -26,7 +27,10 @@
                         <span class="dentist-name">@dentist.Name @dentist.Surname</span>
                         <span class="dentist-location">@dentist.Region - (@dentist.City)</span>
                     </div>
-                    <CreateOrderButton DentistId="@dentist.Id" />
+                    <div class="button-group">
+                        <ReviewPageButton DentistId="@dentist.Id"/>
+                        <CreateOrderButton DentistId="@dentist.Id" />
+                    </div>
                 </li>
             }
         </ul>
@@ -34,12 +38,12 @@
 </div>
 
 @code {
-    string? SelectedSpecialization; 
+    string? SelectedSpecialization;
     string? SelectedRegion;
     List<Dentist> FilteredDentists = null;
-    
-    protected override async Task OnInitializedAsync() 
-    { 
+
+    protected override async Task OnInitializedAsync()
+    {
         FilteredDentists = await DentistService.GetAllDentists();
     }
 }

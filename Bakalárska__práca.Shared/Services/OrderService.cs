@@ -40,7 +40,7 @@ namespace Bakalárska__práca.Shared.Services
             var dbOrder = await _context.Orders.FindAsync(id);
             if (dbOrder != null)
             {
-                dbOrder.Name = order.Name;
+                //dbOrder.Name = order.Name;
                 await _context.SaveChangesAsync();
                 return dbOrder;
             }
