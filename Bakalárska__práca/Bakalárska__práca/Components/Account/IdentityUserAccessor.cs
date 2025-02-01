@@ -1,4 +1,5 @@
-using Bakalárska__práca.Data;
+using Bakalárska__práca.Shared.Services;
+using Bakalárska__práca.Shared.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace Bakalárska__práca.Components.Account

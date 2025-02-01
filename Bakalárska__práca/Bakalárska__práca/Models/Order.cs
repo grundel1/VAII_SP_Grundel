@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Bakalárska__práca.Shared.Model
+namespace Bakalárska__práca.Models
 {
     public class Order
     {
@@ -13,6 +13,10 @@ namespace Bakalárska__práca.Shared.Model
         public int DentistId { get; set; }
         [ForeignKey("DentistId")]
         public Dentist Dentist { get; set; } = null!;
+
+        //public int UserId { get; set; }
+        //public User User { get; set; } = null!;
+        //public ICollection<OrderInfo> OrderInfo { get; set; } = null!;
 
         public Order()
         {

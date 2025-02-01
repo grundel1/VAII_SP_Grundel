@@ -11,8 +11,8 @@ namespace Bakalárska__práca.Shared.Services
 {
     public class DentistService : IDentistService
     {
-        private readonly ClinicContext _context;
-        public DentistService(ClinicContext context)
+        private readonly ApplicationDbContext _context;
+        public DentistService(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -32,8 +32,8 @@ namespace Bakalárska__práca.Shared.Services
         {
             var query = _context.Dentists.AsQueryable();
 
-            if (!string.IsNullOrWhiteSpace(specialization))
-                query = query.Where(d => d.Specialization == specialization);
+            //if (!string.IsNullOrWhiteSpace(specialization))
+            //    query = query.Where(d => d.Specialization == specialization);
 
             if (!string.IsNullOrWhiteSpace(region))
                 query = query.Where(d => d.Region == region);

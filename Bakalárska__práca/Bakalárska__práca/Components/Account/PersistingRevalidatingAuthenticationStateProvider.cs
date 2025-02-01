@@ -1,5 +1,5 @@
 using Bakalárska__práca.Client;
-using Bakalárska__práca.Data;
+using Bakalárska__práca.Shared.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using System.Diagnostics;
 using System.Security.Claims;
+using Bakalárska__práca.Shared.Models;
 
 namespace Bakalárska__práca.Components.Account
 {

@@ -1,6 +1,6 @@
 using Bakalárska__práca.Components.Account.Pages;
 using Bakalárska__práca.Components.Account.Pages.Manage;
-using Bakalárska__práca.Data;
+//using Bakalárska__práca.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using System.Security.Claims;
 using System.Text.Json;
+using Bakalárska__práca.Shared.Models;
 
 namespace Microsoft.AspNetCore.Routing
 {

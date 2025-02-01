@@ -2,17 +2,17 @@
 
 #nullable disable
 
-namespace Bakalárska__práca.Migrations.Clinic
+namespace Bakalárska__práca.Migrations
 {
     /// <inheritdoc />
-    public partial class addedSpecialization : Migration
+    public partial class addSpec : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "Specialization",
-                table: "Orders",
+                table: "Dentists",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
@@ -23,7 +23,7 @@ namespace Bakalárska__práca.Migrations.Clinic
         {
             migrationBuilder.DropColumn(
                 name: "Specialization",
-                table: "Orders");
+                table: "Dentists");
         }
     }
 }

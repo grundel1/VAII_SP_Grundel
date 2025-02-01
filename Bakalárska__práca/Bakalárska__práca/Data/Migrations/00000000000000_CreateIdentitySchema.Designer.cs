@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using System;
-using Bakalárska__práca.Data;
+using Bakalárska__práca.Shared.Services;
 
 #nullable disable
 

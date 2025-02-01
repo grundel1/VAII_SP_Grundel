@@ -7,9 +7,10 @@ namespace Bakalárska__práca.Shared.Services
 {
     public class OrderService : IOrderService
     {
-        private readonly ClinicContext _context;
+        //private readonly ClinicContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public OrderService(ClinicContext context)
+        public OrderService(ApplicationDbContext context)
         {
             _context = context;
         }

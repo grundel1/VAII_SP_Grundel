@@ -1,8 +1,10 @@
 using Bakalárska__práca.Client.Pages;
 using Bakalárska__práca.Components;
 using Bakalárska__práca.Components.Account;
-using Bakalárska__práca.Data;
 using Bakalárska__práca.Shared.Data;
+using Bakalárska__práca.Shared.Services;
+using Bakalárska__práca.Shared.Data;
+using Bakalárska__práca.Shared.Models;
 using Bakalárska__práca.Shared.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,9 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var optionsDb = new DbContextOptionsBuilder<ClinicContext>()
+var optionsDb = new DbContextOptionsBuilder<ApplicationDbContext>()
     .UseSqlServer(builder.Configuration.GetConnectionString("DentistSystem"))
     .Options;
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer("Server=LAPTOP-140TCCMK\\SQLEXPRESS;Database=DentistSystemDB;Trusted_Connection=True;TrustServerCertificate=True;", b => b.MigrationsAssembly("Bakalárska__práca")));
+
 
 builder.Services.AddControllers();
 
@@ -21,7 +27,7 @@ builder.Services.AddScoped(http => new HttpClient
     BaseAddress = new Uri(builder.Configuration.GetSection("BaseUri").Value!),
 });
 
-builder.Services.AddDbContext<ClinicContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DentistSystem"));
 });
