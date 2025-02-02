@@ -2,8 +2,9 @@
 @using Microsoft.AspNetCore.Authorization
 @inject IOrderService OrderService
 @inject IDentistService DentistService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @attribute [StreamRendering]
-@attribute [Authorize(Roles = "User")]
+@* @attribute [Authorize(Roles = "User")] *@
 
 <h3>Vaše objednávky</h3>
 
@@ -55,7 +56,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        orders = await OrderService.GetAllOrders();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+    
+        if (user.Identity.IsAuthenticated)
+        {
+            var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            orders = await OrderService.GetOrdersByUserId(userId);
+        }
     }
 
     void ShowConfirmDialog(int orderId)
@@ -67,7 +75,7 @@ else
     async Task ConfirmDelete()
     {
         await OrderService.DeleteOrder(orderToDeleteId);
-        orders = await OrderService.GetAllOrders(); // Aktualizácia zoznamu objednávok
+        orders = await OrderService.GetAllOrders();
         isConfirmDialogVisible = false;
     }
 

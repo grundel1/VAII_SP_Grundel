@@ -7,7 +7,6 @@ namespace Bakalárska__práca.Shared.Services
 {
     public class OrderService : IOrderService
     {
-        //private readonly ClinicContext _context;
         private readonly ApplicationDbContext _context;
 
         public OrderService(ApplicationDbContext context)
@@ -36,12 +35,18 @@ namespace Bakalárska__práca.Shared.Services
             return await _context.Orders.FindAsync(id);
         }
 
+        public async Task<List<Order>> GetOrdersByUserId(string userId)
+        {
+            return await _context.Orders
+                .Where(o => o.UserId == userId)
+                .ToListAsync();
+        }
+
         public async Task<Order> EditOrder(int id, Order order)
         {
             var dbOrder = await _context.Orders.FindAsync(id);
             if (dbOrder != null)
             {
-                //dbOrder.Name = order.Name;
                 await _context.SaveChangesAsync();
                 return dbOrder;
             }

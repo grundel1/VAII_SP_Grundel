@@ -32,8 +32,8 @@ namespace Bakalárska__práca.Shared.Services
         {
             var query = _context.Dentists.AsQueryable();
 
-            //if (!string.IsNullOrWhiteSpace(specialization))
-            //    query = query.Where(d => d.Specialization == specialization);
+            if (!string.IsNullOrWhiteSpace(specialization))
+                query = query.Where(d => d.Specialization == specialization);
 
             if (!string.IsNullOrWhiteSpace(region))
                 query = query.Where(d => d.Region == region);

@@ -2,6 +2,7 @@
 using Bakalárska__práca.Shared.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bakalárska__práca.Controllers
 {
@@ -22,6 +23,14 @@ namespace Bakalárska__práca.Controllers
             var order = await _orderService.GetOrderById(id);
             return Ok(order);
         }
+
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<List<Order>>> GetOrdersByUserId(string userId)
+        {
+            var orders = await _orderService.GetOrdersByUserId(userId);
+            return Ok(orders);
+        }
+
 
         [HttpPost]
         public async Task<ActionResult<Order>> AddOrders(Order order)

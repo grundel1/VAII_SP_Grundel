@@ -7,7 +7,7 @@
 @inject IOrderService OrderService
 @inject IDentistService DentistService
 @rendermode InteractiveAuto
-@attribute [Authorize(Roles = "User")]
+@* @attribute [Authorize(Roles = "User")] *@
 
 @if(Id == null)
 {
@@ -66,6 +66,9 @@ else
 
     [Parameter]
     public int? DentistId { get; set; }
+
+    [Parameter] 
+    public string? UserId { get; set; }
 
     Order order { get; set; } = new Order { };
     string dentistFullName = "Neznámy zubár";

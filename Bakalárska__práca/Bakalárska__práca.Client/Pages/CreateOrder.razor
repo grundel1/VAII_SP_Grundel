@@ -6,8 +6,10 @@
 @inject NavigationManager NavigationManager
 @inject IOrderService OrderService
 @inject IDentistService DentistService
+@inject IUserService UserService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveAuto
-@attribute [Authorize(Roles = "User")]
+@* @attribute [Authorize(Roles = "User")] *@
 
 @if (Id == null)
 {
@@ -67,6 +69,9 @@ else
     [Parameter]
     public int? DentistId { get; set; }
 
+    [Parameter] 
+    public string? UserId { get; set; }
+
     Order order { get; set; } = new Order {};
     string dentistFullName = "Neznámy zubár";
 
@@ -92,6 +97,20 @@ else
         }
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            UserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        order.OrderPlaced = DateTime.Today;
+    }
+
+
     protected override void OnInitialized()
     {
         order.OrderPlaced = DateTime.Today;
@@ -100,6 +119,7 @@ else
     async Task HandleSubmit()
     {
         order.OrderTime = order.OrderTime.Date.Add(order.Time.TimeOfDay);
+        order.UserId = UserId;
 
         if (Id == null)
         {
@@ -112,6 +132,7 @@ else
             NavigationManager.NavigateTo("/orderList");
         }
     }
+
 
     private void ShowDialog()
     {

@@ -34,6 +34,12 @@ namespace Bakalárska__práca.Shared.Services
             return result;
         }
 
+        public async Task<List<Order>> GetOrdersByUserId(string userId)
+        {
+            var result = await _httpClient.GetFromJsonAsync<List<Order>>($"/api/order/user/{userId}");
+            return result;
+        }
+
         public async Task<Order> EditOrder(int id, Order order)
         {
             var result = await _httpClient.PutAsJsonAsync($"/api/order/{id}", order);
