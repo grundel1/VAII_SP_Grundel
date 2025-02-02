@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Bakalárska__práca.Shared.Models;
 
 namespace Bakalárska__práca.Shared.Model
 {
@@ -13,6 +14,9 @@ namespace Bakalárska__práca.Shared.Model
         public int DentistId { get; set; }
         [ForeignKey("DentistId")]
         public Dentist Dentist { get; set; } = null!;
+        public string? UserId { get; set; }
+        [ForeignKey("UserId")] 
+        public ApplicationUser? User { get; set; } = null!;
 
         public Order()
         {

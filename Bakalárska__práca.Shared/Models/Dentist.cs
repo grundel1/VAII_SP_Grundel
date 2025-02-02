@@ -1,4 +1,6 @@
-﻿namespace Bakalárska__práca.Shared.Model
+﻿using Bakalárska__práca.Shared.Models;
+
+namespace Bakalárska__práca.Shared.Model
 {
     public class Dentist
     {
@@ -10,6 +12,6 @@
         public string City { get; set; } = null!;
         public string? Address { get; set; }
         public string? Phone { get; set; }
-        public List<Order> Orders { get; set; }
+        public ICollection<Review> Reviews { get; set; }
     }
 }
