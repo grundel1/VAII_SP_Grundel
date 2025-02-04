@@ -1,0 +1,53 @@
+﻿/* Základný štýl pre stránku */
+.dentist-details {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+    /* Nadpisy */
+    .dentist-details h2 {
+        color: #007bff;
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .dentist-details h4 {
+        margin-top: 20px;
+        font-size: 20px;
+        color: #555;
+    }
+
+    /* Informácie o zubárovi */
+    .dentist-details p {
+        font-size: 16px;
+        line-height: 1.6;
+        margin: 8px 0;
+    }
+
+    /* Recenzie */
+    .dentist-details ul {
+        list-style: none;
+        padding: 0;
+    }
+
+        .dentist-details ul li {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            border-left: 5px solid #007bff;
+        }
+
+/* Responzívnosť */
+@media (max-width: 768px) {
+    .dentist-details {
+        max-width: 90%;
+        padding: 15px;
+    }
+}

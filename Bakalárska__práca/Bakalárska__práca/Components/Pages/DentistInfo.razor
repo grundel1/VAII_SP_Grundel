@@ -1,0 +1,32 @@
+﻿@page "/dentistInfo/{dentistId:int}"
+@inject IDentistService DentistService
+
+<h3>Informácie o zubárovi</h3>
+
+@if (Dentist == null)
+{
+    <p>Načítavam informácie...</p>
+}
+else
+{
+    <div class="dentist-details">
+        <h2>@Dentist.Name @Dentist.Surname</h2>
+        <p><strong>Špecializácia:</strong> @Dentist.Specialization</p>
+        <p><strong>Región:</strong> @Dentist.Region</p>
+        <p><strong>Mesto:</strong> @Dentist.City</p>
+        <p><strong>Adresa:</strong> @(Dentist.Address ?? "Neznáma")</p>
+        <p><strong>Telefón:</strong> @(Dentist.Phone ?? "Neznáme číslo")</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int DentistId { get; set; }
+
+    private Dentist? Dentist { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Dentist = await DentistService.GetDentistById(DentistId);
+    }
+}
