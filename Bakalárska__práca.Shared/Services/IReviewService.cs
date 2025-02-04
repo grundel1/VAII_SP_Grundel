@@ -11,6 +11,7 @@ namespace Bakalárska__práca.Shared.Services
     public interface IReviewService
     {
         Task<Review> AddReview(Review review);
-        Task<Review> GetReviewsByDentistId(int id);
+        Task<List<Review>> GetReviewsByDentistId(int id);
+        Task<bool> DeleteReview(int id);
     }
 }

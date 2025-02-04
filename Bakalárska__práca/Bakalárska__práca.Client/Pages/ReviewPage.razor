@@ -1,11 +1,14 @@
-﻿@page "/review-page"
-@page "/review-page/{dentistId:int}"
+﻿@page "/review-page/{dentistId:int}"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
 @using Bakalárska__práca.Shared.Model
 @using Bakalárska__práca.Shared.Models
 @using Bakalárska__práca.Shared.Services
 @inject NavigationManager NavigationManager
 @inject IReviewService ReviewService
 @inject IDentistService DentistService
+@inject IUserService UserService
+@inject AuthenticationStateProvider AuthenticationStateProvider
 @rendermode InteractiveAuto
 
 <h3>Hodnotenie zubára</h3>
@@ -28,15 +31,21 @@
 
     <hr />
     <h4>Recenzie:</h4>
-    @if (Reviews != null && Reviews.Any())
+    @if (Reviews.Any())
     {
         <ul>
-            @foreach (var rev in Reviews)
+            @foreach (var review in Reviews)
             {
-                <li>
-                    <strong>Hodnotenie:</strong> @rev.Rating/5 <br />
-                    <strong>Komentár:</strong> @rev.Comment <br />
-                    <small>@rev.Date.ToShortDateString()</small>
+                <li style="position: relative; padding-right: 90px;">
+                    <strong>Autor:</strong> @(UserNames.ContainsKey(review.UserId) ? UserNames[review.UserId] : "Neznámy používateľ")<br />
+                    <strong>Hodnotenie:</strong> @review.Rating/5 <br />
+                    <strong>Komentár:</strong> @review.Comment <br />
+                    <small>@review.Date.ToShortDateString()</small>
+
+                    @if (UserId == review.UserId)
+                    {
+                        <button class="btn btn-danger" @onclick="() => ShowDeleteConfirmation(review.Id)">Zmazať</button>
+                    }
                 </li>
             }
         </ul>
@@ -51,29 +60,104 @@ else
     <p>Načítavam údaje...</p>
 }
 
+@if (showDeleteConfirmation)
+{
+    <div class="modal" tabindex="-1" style="display:block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Potvrdenie zmazania</h5>
+                    <button type="button" class="close" @onclick="CancelDelete">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Ste si istý, že chcete zmazať túto recenziu?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDelete">Zrušiť</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteReview">Zmazať</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
 @code {
     [Parameter]
     public int? DentistId { get; set; }
 
     private Dentist? Dentist { get; set; }
-    private List<Review> Reviews { get; set; } = new List<Review>();
-    private Review review { get; set; } = new Review();
+    private List<Review> Reviews { get; set; } = new();
+    private Review review { get; set; } = new();
+    private string? UserId { get; set; }
+    private Dictionary<string, string> UserNames { get; set; } = new();
+    private bool showDeleteConfirmation = false;
+    private int reviewToDeleteId = 0;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
         if (DentistId.HasValue)
         {
             Dentist = await DentistService.GetDentistById(DentistId.Value);
-            //Reviews = await ReviewService.GetReviewsByDentistId(DentistId.Value);
+            Reviews = await ReviewService.GetReviewsByDentistId(DentistId.Value);
             review.DentistId = DentistId.Value;
+            review.UserId = UserId;
+            await LoadUserNames();
+        }
+    }
+
+    private async Task LoadUserNames()
+    {
+        var userIds = Reviews.Select(r => r.UserId).Distinct();
+        foreach (var id in userIds)
+        {
+            var user = await UserService.GetUserById(id);
+            if (user != null)
+            {
+                UserNames[id] = user.UserName;
+            }
         }
     }
 
     private async Task HandleSubmit()
     {
+        if (string.IsNullOrEmpty(UserId))
+        {
+            return;
+        }
+
         review.Date = DateTime.Now;
+        review.UserId = UserId;
         await ReviewService.AddReview(review);
-        //Reviews = await ReviewService.GetReviewsByDentistId(review.DentistId);
-        review = new Review { DentistId = review.DentistId };
+        Reviews = await ReviewService.GetReviewsByDentistId(review.DentistId);
+        review = new Review { DentistId = review.DentistId, UserId = UserId };
+        await LoadUserNames();
+    }
+
+    private void ShowDeleteConfirmation(int reviewId)
+    {
+        reviewToDeleteId = reviewId;
+        showDeleteConfirmation = true;
+    }
+
+    private async Task DeleteReview()
+    {
+        var success = await ReviewService.DeleteReview(reviewToDeleteId);
+        if (success)
+        {
+            Reviews = await ReviewService.GetReviewsByDentistId(DentistId.Value);
+        }
+        showDeleteConfirmation = false;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirmation = false;
     }
 }
