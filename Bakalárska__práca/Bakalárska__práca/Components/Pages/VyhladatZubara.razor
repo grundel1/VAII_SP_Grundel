@@ -12,10 +12,11 @@
 <div class="container">
     <h1>Vyhľadaj svojho zubára a objednaj sa</h1>
     
+    <div class="filters">
     <div class="sel-spec">
         <label>Špecializácia:</label>
         <select @bind="SelectedSpecialization">
-            <option value="">Všetky</option>
+            <option value="Všetky">Všetky</option>
             <option value="Stomatochirurgia">Stomatochirurgia</option>
             <option value="Parodontológia">Parodontológia</option>
             <option value="Ortodoncia">Ortodoncia</option>
@@ -24,8 +25,24 @@
             <option value="Všeobecné pre deti">Všeobecné pre deti</option>
         </select>
     </div>
-    
-    <button>Vyfiltruj</button>
+
+    <div class="sel-kraj">
+        <label>Kraj:</label>
+        <select @bind="SelectedRegion">
+            <option value="Všetko">Celé Slovensko</option>
+            <option value="Banskobystrický kraj">Banskobystrický kraj</option>
+            <option value="Bratislavský kraj">Bratislavský kraj</option>
+            <option value="Košický kraj">Košický kraj</option>
+            <option value="Nitriansky kraj">Nitriansky kraj</option>
+            <option value="Prešovský kraj">Prešovský kraj</option>
+            <option value="Trenčiansky kraj">Trenčiansky kraj</option>
+            <option value="Trnavský kraj">Trnavský kraj</option>
+            <option value="Žilinský kraj">Žilinský kraj</option>
+        </select>
+    </div>
+
+    <button @onclick="FilterDentists">Vyfiltruj</button>
+</div>
 
     <hr />
 
@@ -58,9 +75,23 @@
 @code {
     List<Dentist> FilteredDentists = null;
     private string? SelectedSpecialization;
+    private string? SelectedRegion;
 
     protected override async Task OnInitializedAsync()
     {
         FilteredDentists = await DentistService.GetAllDentists();
+    }
+
+    private async void FilterDentists()
+    {
+        if (SelectedSpecialization == "Všetky" && SelectedRegion == "Všetko")
+        {
+            FilteredDentists = await DentistService.GetAllDentists();
+        }
+        else
+        {
+            FilteredDentists = await DentistService.GetFilteredDentists(SelectedSpecialization, SelectedRegion);
+        }
+        StateHasChanged();
     }
 }

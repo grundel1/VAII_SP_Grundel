@@ -30,15 +30,16 @@ namespace Bakalárska__práca.Shared.Services
 
         public async Task<List<Dentist>> GetFilteredDentists(string? specialization, string? region)
         {
-            var query = _context.Dentists.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(specialization))
-                query = query.Where(d => d.Specialization == specialization);
-
-            if (!string.IsNullOrWhiteSpace(region))
-                query = query.Where(d => d.Region == region);
-
-            return await query.ToListAsync();
+            var filtered = _context.Dentists.AsQueryable();
+            if (specialization != "Všetky")
+            {
+                filtered = filtered.Where(d => d.Specialization == specialization);
+            }
+            if (region != "Všetko")
+            {
+                filtered = filtered.Where(d => d.Region == region);
+            }
+            return await filtered.ToListAsync();
         }
 
         public async Task UpdateDentist(Dentist dentist)

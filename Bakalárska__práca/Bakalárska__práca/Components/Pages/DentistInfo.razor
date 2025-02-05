@@ -2,6 +2,7 @@
 @inject IDentistService DentistService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IWebHostEnvironment WebHostEnvironment
+@rendermode InteractiveServer
 
 <h3>Informácie o zubárovi</h3>
 
@@ -51,6 +52,8 @@ else
     private bool IsAdmin { get; set; }
     private IBrowserFile? SelectedFile { get; set; }
 
+    string folderPath = "wwwroot/images";
+
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -63,23 +66,21 @@ else
     private void HandleFileSelected(InputFileChangeEventArgs e)
     {
         SelectedFile = e.File;
-        Console.WriteLine($"Vybraný súbor: {SelectedFile?.Name}");
         InvokeAsync(StateHasChanged); // Explicitná aktualizácia UI
     }
 
     private async Task UploadPhoto()
     {
-        if (Dentist == null || SelectedFile == null)
-            return;
 
-        var fileExtension = Path.GetExtension(SelectedFile.Name);
-        var fileName = $"dentist_{Dentist.Id}{fileExtension}";
-        var filePath = Path.Combine(WebHostEnvironment.WebRootPath, "images", fileName);
+        //var fileExtension = Path.GetExtension(SelectedFile.Name);
+        var fileName = SelectedFile.Name;
+        var filePath = Path.Combine(folderPath, fileName);
 
-        using var fileStream = new FileStream(filePath, FileMode.Create);
+        await using var fileStream = new FileStream(filePath, FileMode.Create);
         await SelectedFile.OpenReadStream().CopyToAsync(fileStream);
 
-        Dentist.PhotoUrl = $"/images/{fileName}";
-        await DentistService.UpdateDentist(Dentist);
+        Dentist.PhotoUrl = filePath;
+        Dentist.PhotoUrl = Dentist.PhotoUrl.Replace("wwwroot/", "");
+        DentistService.UpdateDentist(Dentist);
     }
 }

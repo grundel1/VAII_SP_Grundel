@@ -19,6 +19,49 @@ h1 {
     color: #333;
 }
 
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+    .filters div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filters label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .filters select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+        min-width: 200px;
+    }
+
+    .filters button {
+        padding: 10px 16px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        font-size: 16px;
+        margin-top: 25px; /* Posunie button nižšie */
+    }
+
+        .filters button:hover {
+            background-color: #218838;
+        }
+
 hr {
     border: 1px solid #ddd;
 }
