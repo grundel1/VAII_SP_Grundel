@@ -1,53 +1,85 @@
 ﻿/* Základný štýl pre stránku */
 .dentist-details {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 20px;
+    max-width: 900px; /* Zvýšená šírka kontajnera */
+    margin: 30px auto;
+    padding: 40px; /* Zvýšené vnútorné okraje pre "vyplnenie" */
     background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px; /* Zväčšené zaoblenie rohov */
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15); /* Zvýšený tieň pre hlbší efekt */
     font-family: 'Arial', sans-serif;
     color: #333;
+    overflow: hidden; /* Zabezpečí, že nič nevyskočí z kontajnera */
 }
 
     /* Nadpisy */
     .dentist-details h2 {
         color: #007bff;
-        font-size: 28px;
-        margin-bottom: 10px;
+        font-size: 36px; /* Ešte väčší nadpis */
+        margin-bottom: 15px;
+        font-weight: bold; /* Zvýraznenie nadpisu */
     }
 
     .dentist-details h4 {
-        margin-top: 20px;
-        font-size: 20px;
+        margin-top: 30px; /* Väčšia medzera medzi sekciami */
+        font-size: 26px; /* Väčší nadpis pre sekcie */
         color: #555;
     }
 
     /* Informácie o zubárovi */
     .dentist-details p {
-        font-size: 16px;
-        line-height: 1.6;
-        margin: 8px 0;
+        font-size: 18px;
+        line-height: 1.8;
+        margin: 15px 0; /* Väčšie medzery medzi odstavcami */
+        padding: 10px;
+        background-color: #f8f9fa; /* Svetlé pozadie pre každý odstavec */
+        border-radius: 8px; /* Zaoblenie rohov pre lepší vzhľad */
     }
 
     /* Recenzie */
     .dentist-details ul {
         list-style: none;
         padding: 0;
+        margin-top: 20px; /* Väčší medzeru na začiatku sekcie recenzií */
     }
 
         .dentist-details ul li {
             background: #f8f9fa;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 8px;
+            padding: 15px; /* Väčšie vnútorné okraje pre recenzie */
+            margin: 12px 0; /* Väčšia medzera medzi recenziami */
+            border-radius: 10px;
             border-left: 5px solid #007bff;
         }
+
+    /* Obrázky */
+    .dentist-details img {
+        width: 100%; /* Obrázky sa prispôsobia šírke kontajnera */
+        max-width: 350px; /* Nastavenie maximálnej šírky pre obrázky */
+        border-radius: 10px; /* Zaoblenie rohov obrázku */
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
 
 /* Responzívnosť */
 @media (max-width: 768px) {
     .dentist-details {
-        max-width: 90%;
-        padding: 15px;
+        max-width: 95%;
+        padding: 25px;
     }
+
+        .dentist-details h2 {
+            font-size: 30px; /* Zmenšíme veľkosť nadpisu na mobilných zariadeniach */
+        }
+
+        .dentist-details p {
+            font-size: 16px; /* Zmenšíme písmo pre lepšiu čitateľnosť */
+        }
+
+        .dentist-details h4 {
+            font-size: 24px;
+        }
+
+        .dentist-details img {
+            width: 100%;
+            max-width: 300px;
+        }
 }

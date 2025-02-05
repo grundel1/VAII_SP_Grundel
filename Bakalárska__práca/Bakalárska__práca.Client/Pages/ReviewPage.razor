@@ -83,6 +83,12 @@ else
     </div>
 }
 
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-warning" role="alert">
+        @errorMessage
+    </div>
+}
 
 @code {
     [Parameter]
@@ -95,6 +101,7 @@ else
     private Dictionary<string, string> UserNames { get; set; } = new();
     private bool showDeleteConfirmation = false;
     private int reviewToDeleteId = 0;
+    private string? errorMessage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -129,9 +136,11 @@ else
     {
         if (string.IsNullOrEmpty(UserId))
         {
+            errorMessage = "Ak chceš ohodnotiť tohto zubára, musíš byť prihlásený!";
             return;
         }
 
+        errorMessage = null;
         review.Date = DateTime.Now;
         review.UserId = UserId;
         await ReviewService.AddReview(review);

@@ -8,6 +8,7 @@ namespace Bakalárska__práca.Shared.Services
         Task<Order> AddOrder(Order order);
         Task<Order> GetOrderById(int id);
         Task<List<Order>> GetOrdersByUserId(string userId);
+        Task<List<Order>> GetOrdersByDentistAndDate(int dentistId, DateTime date);
         Task<Order> EditOrder(int id, Order order);
         Task<bool> DeleteOrder(int id);
     }

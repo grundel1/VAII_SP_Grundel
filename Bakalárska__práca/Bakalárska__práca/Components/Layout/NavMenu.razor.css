@@ -18,9 +18,11 @@
 }
 
 /* Hamburger menu */
-.navbar-toggler {
-    display: none; /* Skryjeme ho na väèších obrazovkách */
+/* Skry checkbox na mobilnıch zariadeniach */
+#navbar-toggler {
+    display: none;
 }
+
 
 .navbar-toggler-icon {
     cursor: pointer;

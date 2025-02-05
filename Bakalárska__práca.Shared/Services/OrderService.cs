@@ -42,6 +42,13 @@ namespace Bakalárska__práca.Shared.Services
                 .ToListAsync();
         }
 
+        public async Task<List<Order>> GetOrdersByDentistAndDate(int dentistId, DateTime date)
+        {
+            return await _context.Orders
+                .Where(o => o.DentistId == dentistId && o.OrderTime.Date == date.Date)
+                .ToListAsync();
+        }
+
         public async Task<Order> EditOrder(int id, Order order)
         {
             var dbOrder = await _context.Orders.FindAsync(id);

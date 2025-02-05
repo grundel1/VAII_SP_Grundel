@@ -9,7 +9,7 @@
 @rendermode InteractiveAuto
 @* @attribute [Authorize(Roles = "User")] *@
 
-@if(Id == null)
+@if (Id == null)
 {
     <h3>Vytvor objednávku</h3>
 }
@@ -19,23 +19,15 @@ else
 }
 
 <EditForm Model="order" OnValidSubmit="HandleSubmit">
-    <DataAnnotationsValidator/>
+    <DataAnnotationsValidator />
     <div>
         <label>Vybraný zubár:</label>
         <p>@dentistFullName</p>
+        <label>Výber vyšetrenia:</label>
+        <p>@order.Specialization</p>
         <label>Dátum a čas</label>
         <InputDate @bind-Value="order.OrderTime" min="@Today"></InputDate>
-        <input class="inputTime" type="time" @bind-value="order.Time" step="900"/>
-        <label>Výber vyšetrenia</label>
-        <InputSelect TValue="string" @bind-Value="order.Specialization">
-            <option value=""></option>
-            <option value="Stomatochirurgia">Stomatochirurgia</option>
-            <option value="Parodontológia">Parodontológia</option>
-            <option value="Ortodoncia">Ortodoncia</option>
-            <option value="Pedostomatológia">Pedostomatológia</option>
-            <option value="Všeobecné pre dospelých">Všeobecné pre dospelých</option>
-            <option value="Všeobecné pre deti">Všeobecné pre deti</option>
-        </InputSelect>
+        <input class="inputTime" type="time" @bind-value="order.Time" step="900" />
     </div>
 
     <button type="submit" class="btn btn-primary">Potvrdiť</button>
@@ -67,7 +59,7 @@ else
     [Parameter]
     public int? DentistId { get; set; }
 
-    [Parameter] 
+    [Parameter]
     public string? UserId { get; set; }
 
     Order order { get; set; } = new Order { };
@@ -87,6 +79,7 @@ else
             {
                 var dentist = await DentistService.GetDentistById(DentistId.Value);
                 dentistFullName = $"{dentist.Name} {dentist.Surname}";
+                order.Specialization = dentist.Specialization;
             }
         }
         else

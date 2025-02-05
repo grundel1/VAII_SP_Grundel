@@ -1,5 +1,7 @@
 ﻿@page "/dentistInfo/{dentistId:int}"
 @inject IDentistService DentistService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IWebHostEnvironment WebHostEnvironment
 
 <h3>Informácie o zubárovi</h3>
 
@@ -11,11 +13,33 @@ else
 {
     <div class="dentist-details">
         <h2>@Dentist.Name @Dentist.Surname</h2>
+
+        @if (!string.IsNullOrEmpty(Dentist.PhotoUrl))
+        {
+            <img src="@Dentist.PhotoUrl" alt="Fotka zubára" width="200" />
+        }
+        else
+        {
+            <p>Fotografia nie je k dispozícii.</p>
+        }
+
+        @if (IsAdmin)
+        {
+            <h4>Nahrať novú fotografiu</h4>
+            <InputFile OnChange="HandleFileSelected" accept="image/*" />
+            <button @onclick="UploadPhoto" disabled="@(SelectedFile == null)">Nahrať</button>
+        }
+
         <p><strong>Špecializácia:</strong> @Dentist.Specialization</p>
-        <p><strong>Región:</strong> @Dentist.Region</p>
+        <p><strong>Kraj:</strong> @Dentist.Region</p>
         <p><strong>Mesto:</strong> @Dentist.City</p>
         <p><strong>Adresa:</strong> @(Dentist.Address ?? "Neznáma")</p>
         <p><strong>Telefón:</strong> @(Dentist.Phone ?? "Neznáme číslo")</p>
+
+        <p>
+            <strong>Ordinačné hodiny:</strong>
+            Po - Pia @Dentist.OfficeStartTime.ToString(@"hh\:mm") - @Dentist.OfficeEndTime.ToString(@"hh\:mm")
+        </p>
     </div>
 }
 
@@ -24,9 +48,38 @@ else
     public int DentistId { get; set; }
 
     private Dentist? Dentist { get; set; }
+    private bool IsAdmin { get; set; }
+    private IBrowserFile? SelectedFile { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        IsAdmin = user.IsInRole("Admin");
         Dentist = await DentistService.GetDentistById(DentistId);
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        SelectedFile = e.File;
+        Console.WriteLine($"Vybraný súbor: {SelectedFile?.Name}");
+        InvokeAsync(StateHasChanged); // Explicitná aktualizácia UI
+    }
+
+    private async Task UploadPhoto()
+    {
+        if (Dentist == null || SelectedFile == null)
+            return;
+
+        var fileExtension = Path.GetExtension(SelectedFile.Name);
+        var fileName = $"dentist_{Dentist.Id}{fileExtension}";
+        var filePath = Path.Combine(WebHostEnvironment.WebRootPath, "images", fileName);
+
+        using var fileStream = new FileStream(filePath, FileMode.Create);
+        await SelectedFile.OpenReadStream().CopyToAsync(fileStream);
+
+        Dentist.PhotoUrl = $"/images/{fileName}";
+        await DentistService.UpdateDentist(Dentist);
     }
 }

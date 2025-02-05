@@ -40,5 +40,16 @@ namespace Bakalárska__práca.Shared.Services
 
             return await query.ToListAsync();
         }
+
+        public async Task UpdateDentist(Dentist dentist)
+        {
+            var dentistEntity = await _context.Dentists.FindAsync(dentist.Id);
+            if (dentistEntity != null)
+            {
+                dentistEntity.PhotoUrl = dentist.PhotoUrl;
+                await _context.SaveChangesAsync();
+            }
+        }
+
     }
 }

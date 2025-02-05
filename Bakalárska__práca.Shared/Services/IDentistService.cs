@@ -12,5 +12,6 @@ namespace Bakalárska__práca.Shared.Services
         Task<List<Dentist>> GetAllDentists();
         Task<Dentist> GetDentistById(int id);
         Task<List<Dentist>> GetFilteredDentists(string? specialization, string? region);
+        Task UpdateDentist(Dentist dentist);
     }
 }

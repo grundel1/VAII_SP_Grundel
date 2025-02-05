@@ -5,7 +5,8 @@
 <div class="top-row ps-3 navbar navbar-dark">
     <div class="container-fluid">
         <a class="navbar-brand" href="">ObjednanieZubara.sk</a>
-        <!-- Hamburger button -->
+
+        <!-- Hamburger button, skrytý na väčších obrazovkách -->
         <input type="checkbox" id="navbar-toggler" class="navbar-toggler d-md-none">
         <label for="navbar-toggler" class="navbar-toggler-icon"></label>
 
@@ -26,11 +27,6 @@
                     Vyhľadať zubára
                 </NavLink>
             </div>
-            @* <div class="nav-item px-3">
-                <NavLink class="nav-link" href="auth">
-                    <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
-                </NavLink>
-            </div>  *@
 
             <AuthorizeView>
                 <Authorized>
@@ -82,11 +78,7 @@
                         Vyhľadať zubára
                     </NavLink>
                 </div>
-               @*  <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="auth">
-                        <span class="bi bi-lock-nav-menu" aria-hidden="true"></span> Auth Required
-                    </NavLink>
-                </div> *@
+
                 <AuthorizeView>
                     <Authorized>
                         <div class="nav-item px-3">
@@ -122,8 +114,6 @@
     </div>
 </div>
 
-
-
 @code {
     private string? currentUrl;
 
@@ -144,6 +134,4 @@
         NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }
-
-
 

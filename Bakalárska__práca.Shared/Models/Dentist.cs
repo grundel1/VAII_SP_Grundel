@@ -13,5 +13,8 @@ namespace Bakalárska__práca.Shared.Model
         public string? Phone { get; set; }
         public string Specialization { get; set; }
         public ICollection<Review> Reviews { get; set; }
+        public string? PhotoUrl { get; set; }
+        public TimeSpan OfficeStartTime { get; set; }
+        public TimeSpan OfficeEndTime { get; set; }
     }
 }

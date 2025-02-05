@@ -40,6 +40,11 @@ namespace Bakalárska__práca.Shared.Services
             return result;
         }
 
+        public Task<List<Order>> GetOrdersByDentistAndDate(int dentistId, DateTime date)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Order> EditOrder(int id, Order order)
         {
             var result = await _httpClient.PutAsJsonAsync($"/api/order/{id}", order);

@@ -1,7 +1,6 @@
 ﻿@page "/vyhladatZubara"
-@using Bakalárska__práca.Shared.Services
 @inject IDentistService DentistService
-@inject NavigationManager Navigation
+@inject NavigationManager NavigationManager
 @attribute [StreamRendering]
 @rendermode InteractiveServer
 
@@ -12,6 +11,21 @@
 
 <div class="container">
     <h1>Vyhľadaj svojho zubára a objednaj sa</h1>
+    
+    <div class="sel-spec">
+        <label>Špecializácia:</label>
+        <select @bind="SelectedSpecialization">
+            <option value="">Všetky</option>
+            <option value="Stomatochirurgia">Stomatochirurgia</option>
+            <option value="Parodontológia">Parodontológia</option>
+            <option value="Ortodoncia">Ortodoncia</option>
+            <option value="Pedostomatológia">Pedostomatológia</option>
+            <option value="Všeobecné pre dospelých">Všeobecné pre dospelých</option>
+            <option value="Všeobecné pre deti">Všeobecné pre deti</option>
+        </select>
+    </div>
+    
+    <button>Vyfiltruj</button>
 
     <hr />
 
@@ -43,6 +57,7 @@
 
 @code {
     List<Dentist> FilteredDentists = null;
+    private string? SelectedSpecialization;
 
     protected override async Task OnInitializedAsync()
     {
