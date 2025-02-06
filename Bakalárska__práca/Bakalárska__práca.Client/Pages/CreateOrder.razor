@@ -30,7 +30,7 @@
             <p>@dentistSpecialization</p>
 
             <label>Dátum a čas</label>
-            <InputDate @bind-Value="order.OrderTime" min="@Today" @onchange="OnDateChanged"></InputDate>
+            <InputDate @bind-Value="OrderTime" min="@Tomorrow"/>
 
             <select @bind="order.Time" class="inputTime">
                 @foreach (var availableTime in availableTimes)
@@ -39,14 +39,12 @@
                 }
             </select>
 
-
             @if (timeErrorMessage != null)
             {
                 <div class="alert alert-danger">@timeErrorMessage</div>
             }
         </div>
 
-        <!-- Kontajner pre tlačidlá -->
         <div class="button-container">
             <button type="submit" class="btn btn-primary">Potvrdiť</button>
             <button type="button" class="btn btn-cancel" @onclick="CancelOrder">Zrušiť</button>
@@ -87,8 +85,21 @@
     string dentistSpecialization = "Neznáma špecializácia";
     private bool _dialogVisible = false;
     private string Today => DateTime.Today.ToString("yyyy-MM-dd");
+    private string Tomorrow => DateTime.Today.AddDays(1).ToString("yyyy-MM-dd");
     private List<string> availableTimes = new List<string>();
     private string? timeErrorMessage;
+
+    private DateTime _orderTime;
+    private DateTime OrderTime
+    {
+        get => _orderTime;
+        set
+        {
+            _orderTime = value;
+            Console.WriteLine($"Dátum zmenený na: {value:dd.MM.yyyy}"); // ✅ Výpis do konzoly
+            LoadAvailableTimes();
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -96,6 +107,7 @@
         {
             order = await OrderService.GetOrderById(Id.Value);
             DentistId = order.DentistId;
+            _orderTime = order.OrderTime;
         }
         else
         {
@@ -107,6 +119,7 @@
                 dentistFullName = $"{dentist.Name} {dentist.Surname}";
                 dentistSpecialization = dentist.Specialization;
             }
+            _orderTime = DateTime.Today;
         }
 
         await LoadAvailableTimes();
@@ -127,7 +140,7 @@
 
     private async Task LoadAvailableTimes()
     {
-        if (order.OrderTime != null)
+        if (_orderTime != default)
         {
             var dentist = await DentistService.GetDentistById(order.DentistId);
             availableTimes.Clear();
@@ -141,7 +154,7 @@
                 availableTimes.Add(time);
             }
 
-            var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, order.OrderTime.Date);
+            var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, _orderTime.Date);
             availableTimes = availableTimes.Where(t => !orders.Any(o => o.Time.ToString("hh:mm") == t)).ToList();
         }
     }
@@ -150,13 +163,19 @@
 
     async Task HandleSubmit()
     {
+        if (_orderTime.Date < DateTime.Today.AddDays(1)) // Prevent orders for today
+        {
+            timeErrorMessage = "Objednávky sú povolené len od zajtra.";
+            return;
+        }
+
         if (string.IsNullOrEmpty(UserId))
         {
             timeErrorMessage = "Musíte byť prihlásený na vytvorenie objednávky.";
             return;
         }
 
-        bool isTimeTaken = await CheckIfTimeAvailable(order.OrderTime);
+        bool isTimeTaken = await CheckIfTimeAvailable(_orderTime);
         if (isTimeTaken)
         {
             timeErrorMessage = "Tento čas je už obsadený. Vyberte iný.";
@@ -168,7 +187,7 @@
             order.Specialization = dentistSpecialization;
         }
 
-        order.OrderTime = order.OrderTime.Date.Add(order.Time.TimeOfDay);
+        order.OrderTime = _orderTime.Date.Add(order.Time.TimeOfDay);
         order.UserId = UserId;
 
         if (Id == null)
@@ -204,12 +223,6 @@
     {
         var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, orderDateTime.Date);
         return orders.Any(o => o.Time == orderDateTime);
-    }
-
-    private async Task OnDateChanged(ChangeEventArgs e)
-    {
-        order.OrderTime = DateTime.Parse(e.Value.ToString());
-        await LoadAvailableTimes();
     }
 
     private void CancelOrder()

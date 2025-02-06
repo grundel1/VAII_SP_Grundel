@@ -1,7 +1,6 @@
 ﻿@page "/dentistInfo/{dentistId:int}"
 @inject IDentistService DentistService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IWebHostEnvironment WebHostEnvironment
 @rendermode InteractiveServer
 
 <h3>Informácie o zubárovi</h3>
@@ -103,7 +102,7 @@ else
 
         <p>
             <strong>Ordinačné hodiny:</strong>
-            Po - Pia @Dentist.OfficeStartTime.ToString(@"hh\:mm") - @Dentist.OfficeEndTime.ToString(@"hh\:mm")
+            Po - Ned @Dentist.OfficeStartTime.ToString(@"hh\:mm") - @Dentist.OfficeEndTime.ToString(@"hh\:mm")
         </p>
 
         @if (IsAdmin)
