@@ -96,6 +96,7 @@
     private bool showLoginMessage = false;
 
     private DateTime _orderTime;
+    //prebrate od AI
     private DateTime OrderTime
     {
         get => _orderTime;
@@ -149,6 +150,7 @@
         }
     }
 
+    //prebrate z AI
     private async Task LoadAvailableTimes()
     {
         if (_orderTime != default)
@@ -170,6 +172,7 @@
         }
     }
 
+    //prebrate z AI
     private bool IsSelected(string time) => order.Time.ToString("hh:mm") == time;
 
     async Task HandleSubmit()
@@ -225,6 +228,7 @@
         _dialogVisible = false;
     }
 
+    //prebrate z AI
     private async Task<bool> CheckIfTimeAvailable(DateTime orderDateTime)
     {
         var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, orderDateTime.Date);

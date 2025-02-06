@@ -158,12 +158,13 @@
             availableTimes = availableTimes.Where(t => !orders.Any(o => o.Time.ToString("hh:mm") == t)).ToList();
         }
     }
-
+    //spracovane pomocou AI
     private bool IsSelected(string time) => order.Time.ToString("hh:mm") == time;
 
+    //spracovane pomocou AI
     async Task HandleSubmit()
     {
-        if (_orderTime.Date < DateTime.Today.AddDays(1)) // Prevent orders for today
+        if (_orderTime.Date < DateTime.Today.AddDays(1))
         {
             timeErrorMessage = "Objednávky sú povolené len od zajtra.";
             return;
@@ -219,6 +220,7 @@
         _dialogVisible = false;
     }
 
+    //spracovane pomocou AI
     private async Task<bool> CheckIfTimeAvailable(DateTime orderDateTime)
     {
         var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, orderDateTime.Date);

@@ -137,9 +137,10 @@ else
         InvokeAsync(StateHasChanged);
     }
 
+    //pomoc z internetoveho fora
     private async Task UploadPhoto()
     {
-        if (!IsAdmin) return; // Ochrana pred neautorizovaným volaním
+        if (!IsAdmin) return;
 
         var fileName = SelectedFile.Name;
         var filePath = Path.Combine(folderPath, fileName);
@@ -153,7 +154,7 @@ else
 
     private async Task SaveChanges()
     {
-        if (!IsAdmin) return; // Ochrana pred neautorizovaným volaním
+        if (!IsAdmin) return;
 
         await DentistService.UpdateDentist(Dentist);
     }
