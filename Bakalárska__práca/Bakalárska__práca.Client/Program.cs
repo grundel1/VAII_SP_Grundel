@@ -13,6 +13,9 @@ builder.Services.AddScoped(http => new HttpClient
 {
     BaseAddress = new Uri(builder.HostEnvironment.BaseAddress),
 });
-//builder.Services.AddScoped<IOrderService, ClientOrderService>();
+builder.Services.AddScoped<IOrderService, ClientOrderService>();
+builder.Services.AddScoped<IDentistService, ClientDentistService>();
+builder.Services.AddScoped<IReviewService, ClientReviewService>();
+builder.Services.AddScoped<IUserService, ClientUserService>();
 
 await builder.Build().RunAsync();

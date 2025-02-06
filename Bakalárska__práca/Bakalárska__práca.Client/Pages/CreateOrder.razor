@@ -7,7 +7,7 @@
 @inject IDentistService DentistService
 @inject IUserService UserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@rendermode InteractiveAuto
+@rendermode InteractiveServer
 
 <div class="create-order-form">
     @if (Id == null)
@@ -26,108 +26,194 @@
             <label>Vybraný zubár:</label>
             <p>@dentistFullName</p>
 
-            <label>Výběr vyšetrenia:</label>
-            <p>@order.Specialization</p>
+            <label>Špecializácia:</label>
+            <p>@dentistSpecialization</p>
 
-            <label>Dátum</label>
-            <InputDate @bind-Value="selectedDate" min="@Today" @onchange="LoadAvailableTimes" />
+            <label>Dátum a čas</label>
+            <InputDate @bind-Value="order.OrderTime" min="@Today" @onchange="OnDateChanged"></InputDate>
 
-            @if (availableTimes.Any())
+            <select @bind="order.Time" class="inputTime">
+                @foreach (var availableTime in availableTimes)
+                {
+                    <option value="@availableTime" selected="@(IsSelected(availableTime) ? "selected" : null)">@availableTime</option>
+                }
+            </select>
+
+
+            @if (timeErrorMessage != null)
             {
-                <label>Vyberte dostupný čas</label>
-                <InputSelect @bind-Value="orderTime">
-                    @foreach (var time in availableTimes)
-                    {
-                        <option value="@time">@time</option>
-                    }
-                </InputSelect>
+                <div class="alert alert-danger">@timeErrorMessage</div>
             }
-            else if (selectedDate != null)
-            {
-                <p>Žiadne voľné termíny pre tento deň.</p>
-            }
-
         </div>
 
-        <div class="buttons">
+        <!-- Kontajner pre tlačidlá -->
+        <div class="button-container">
             <button type="submit" class="btn btn-primary">Potvrdiť</button>
-            <button class="btn btn-cancel" @onclick="CancelOrder">Zrušiť</button>
+            <button type="button" class="btn btn-cancel" @onclick="CancelOrder">Zrušiť</button>
         </div>
+
+        @if (Id != null)
+        {
+            <button @onclick="ShowDialog" type="button" class="btn btn-cancel">Zmazať</button>
+        }
     </EditForm>
+
+    @if (_dialogVisible)
+    {
+        <div class="dialog-overlay">
+            <div class="dialog-box">
+                <h3>Naozaj chcete vymazať objednávku?</h3>
+                <div class="dialog-actions">
+                    <button class="confirm-button" @onclick="ConfirmDelete">Áno, vymazať</button>
+                    <button class="cancel-button" @onclick="CancelDelete">Zrušiť</button>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
-    [Parameter] public int? Id { get; set; }
-    [Parameter] public int? DentistId { get; set; }
-    [Parameter] public string? UserId { get; set; }
+    [Parameter]
+    public int? Id { get; set; }
 
-    private Order order = new Order();
-    private string dentistFullName = "Neznámy zubár";
-    private DateTime? selectedDate;
-    private List<string> availableTimes = new();
-    private string orderTime;
+    [Parameter]
+    public int? DentistId { get; set; }
 
+    [Parameter]
+    public string? UserId { get; set; }
+
+    Order order { get; set; } = new Order { };
+    string dentistFullName = "Neznámy zubár";
+    string dentistSpecialization = "Neznáma špecializácia";
+    private bool _dialogVisible = false;
     private string Today => DateTime.Today.ToString("yyyy-MM-dd");
+    private List<string> availableTimes = new List<string>();
+    private string? timeErrorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Id.HasValue)
+        {
+            order = await OrderService.GetOrderById(Id.Value);
+            DentistId = order.DentistId;
+        }
+        else
+        {
+            order = new Order { };
+            if (DentistId.HasValue)
+            {
+                order.DentistId = DentistId.Value;
+                var dentist = await DentistService.GetDentistById(DentistId.Value);
+                dentistFullName = $"{dentist.Name} {dentist.Surname}";
+                dentistSpecialization = dentist.Specialization;
+            }
+        }
+
+        await LoadAvailableTimes();
+    }
 
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
+
         if (user.Identity.IsAuthenticated)
         {
             UserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
         }
+
+        order.OrderPlaced = DateTime.Today;
+    }
+
+    private async Task LoadAvailableTimes()
+    {
+        if (order.OrderTime != null)
+        {
+            var dentist = await DentistService.GetDentistById(order.DentistId);
+            availableTimes.Clear();
+
+            TimeSpan start = dentist.OfficeStartTime;
+            TimeSpan end = dentist.OfficeEndTime;
+
+            for (TimeSpan currentTime = start; currentTime < end; currentTime = currentTime.Add(TimeSpan.FromMinutes(30)))
+            {
+                string time = currentTime.ToString(@"hh\:mm");
+                availableTimes.Add(time);
+            }
+
+            var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, order.OrderTime.Date);
+            availableTimes = availableTimes.Where(t => !orders.Any(o => o.Time.ToString("hh:mm") == t)).ToList();
+        }
+    }
+
+    private bool IsSelected(string time) => order.Time.ToString("hh:mm") == time;
+
+    async Task HandleSubmit()
+    {
+        if (string.IsNullOrEmpty(UserId))
+        {
+            timeErrorMessage = "Musíte byť prihlásený na vytvorenie objednávky.";
+            return;
+        }
+
+        bool isTimeTaken = await CheckIfTimeAvailable(order.OrderTime);
+        if (isTimeTaken)
+        {
+            timeErrorMessage = "Tento čas je už obsadený. Vyberte iný.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(order.Specialization))
+        {
+            order.Specialization = dentistSpecialization;
+        }
+
+        order.OrderTime = order.OrderTime.Date.Add(order.Time.TimeOfDay);
+        order.UserId = UserId;
+
+        if (Id == null)
+        {
+            await OrderService.AddOrder(order);
+            NavigationManager.NavigateTo("/orderList");
+        }
+        else
+        {
+            await OrderService.EditOrder((int)Id, order);
+            NavigationManager.NavigateTo("/orderList");
+        }
+    }
+
+    private void ShowDialog()
+    {
+        _dialogVisible = true;
+    }
+
+    async Task ConfirmDelete()
+    {
+        _dialogVisible = false;
+        await OrderService.DeleteOrder((int)Id);
+        NavigationManager.NavigateTo("/orderList");
+    }
+
+    private void CancelDelete()
+    {
+        _dialogVisible = false;
+    }
+
+    private async Task<bool> CheckIfTimeAvailable(DateTime orderDateTime)
+    {
+        var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, orderDateTime.Date);
+        return orders.Any(o => o.Time == orderDateTime);
+    }
+
+    private async Task OnDateChanged(ChangeEventArgs e)
+    {
+        order.OrderTime = DateTime.Parse(e.Value.ToString());
+        await LoadAvailableTimes();
     }
 
     private void CancelOrder()
     {
         NavigationManager.NavigateTo("/vyhladatZubara");
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        if (DentistId.HasValue)
-        {
-            var dentist = await DentistService.GetDentistById(DentistId.Value);
-            dentistFullName = $"{dentist.Name} {dentist.Surname}";
-            order.Specialization = dentist.Specialization;
-        }
-    }
-
-    private async Task LoadAvailableTimes(ChangeEventArgs e)
-    {
-        selectedDate = DateTime.Parse(e.Value.ToString());
-        availableTimes.Clear();
-
-        if (DentistId.HasValue && selectedDate.HasValue)
-        {
-            var orders = await OrderService.GetOrdersByDentistAndDate(DentistId.Value, selectedDate.Value);
-            var bookedTimes = orders.Select(o => o.OrderTime.TimeOfDay).ToList();
-
-            TimeSpan startTime = new TimeSpan(0, 0, 0);
-            TimeSpan endTime = new TimeSpan(15, 0, 0);
-            TimeSpan interval = new TimeSpan(0, 30, 0);
-
-            for (var time = startTime; time < endTime; time += interval)
-            {
-                if (!bookedTimes.Any(bt => bt == time))
-                {
-                    availableTimes.Add(time.ToString(@"hh\:mm"));
-                }
-            }
-        }
-    }
-
-    private async Task HandleSubmit()
-    {
-        if (!string.IsNullOrEmpty(orderTime))
-        {
-            order.OrderTime = selectedDate.Value.Add(TimeSpan.Parse(orderTime));
-            order.UserId = UserId;
-            order.DentistId = DentistId.Value;
-
-            await OrderService.AddOrder(order);
-            NavigationManager.NavigateTo("/orderList");
-        }
     }
 }

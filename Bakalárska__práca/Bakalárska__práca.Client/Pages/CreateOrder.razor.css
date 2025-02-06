@@ -1,8 +1,8 @@
 ﻿/* Základný štýl pre stránku */
 .create-order-form {
-    max-width: 600px;
+    max-width: 800px; /* Zvýšenie šírky formulára */
     margin: 40px auto;
-    padding: 30px;
+    padding: 40px; /* Zvýšenie paddingu pre viac miesta */
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
@@ -13,25 +13,25 @@
     /* Nadpisy */
     .create-order-form h3 {
         color: #007bff;
-        font-size: 28px;
+        font-size: 32px; /* Zvýšenie veľkosti textu */
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
     }
 
     /* Informácie o objednávke */
     .create-order-form label {
         font-weight: bold;
         color: #555;
-        font-size: 16px;
-        margin-bottom: 8px;
+        font-size: 18px; /* Zvýšenie veľkosti textu */
+        margin-bottom: 10px;
         display: block;
     }
 
     /* Informácie o zubárovi a špecializácii */
     .create-order-form p {
-        font-size: 16px;
-        line-height: 1.6;
-        margin: 8px 0;
+        font-size: 18px; /* Zvýšenie veľkosti textu */
+        line-height: 1.8; /* Zvýšenie výšky riadkov */
+        margin: 10px 0;
         color: #555;
     }
 
@@ -39,11 +39,11 @@
     .create-order-form input,
     .create-order-form select {
         width: 100%;
-        padding: 12px;
-        margin: 10px 0 20px 0;
+        padding: 15px; /* Zvýšenie paddingu */
+        margin: 15px 0 25px 0; /* Väčšia medzera medzi poľami */
         border-radius: 8px;
         border: 1px solid #ccc;
-        font-size: 16px;
+        font-size: 18px; /* Zvýšenie veľkosti textu */
     }
 
         /* Focus efekt na vstupy */
@@ -56,13 +56,13 @@
     /* Tlačidlá */
     .create-order-form .btn {
         width: 48%;
-        padding: 12px 20px;
-        font-size: 16px;
+        padding: 15px; /* Zvýšenie paddingu */
+        font-size: 18px; /* Zvýšenie veľkosti textu */
         border: none;
         border-radius: 8px;
         cursor: pointer;
         transition: background-color 0.3s ease;
-        margin: 10px 1%;
+        margin: 15px 1%; /* Väčšia medzera medzi tlačidlami */
     }
 
     /* Potvrdiť tlačidlo */
@@ -89,15 +89,21 @@
 @media (max-width: 768px) {
     .create-order-form {
         max-width: 90%;
-        padding: 20px;
+        padding: 30px;
     }
 
         .create-order-form .btn {
             width: 100%;
-            margin: 10px 0;
+            margin: 15px 0;
         }
 
         .create-order-form h3 {
-            font-size: 24px;
+            font-size: 28px; /* Zvýšenie veľkosti textu pre menšie obrazovky */
         }
+}
+
+.create-order-form .button-container {
+    display: flex;
+    justify-content: space-between; /* Tlačidlá budú rovnomerne rozdelené */
+    gap: 15px; /* Väčšia medzera medzi tlačidlami */
 }

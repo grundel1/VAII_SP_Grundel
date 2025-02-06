@@ -26,7 +26,7 @@ else
         {
             <li class="order-item">
                 <span class="order-name">@order.Specialization</span>
-                <span class="order-date">Dátum vyšetrenia: @order.OrderTime</span>
+                <span class="order-date">Dátum vyšetrenia: @order.OrderTime.ToString("dd-MM-yyyy HH:mm")</span>
                 @if (dentistNames.TryGetValue(order.DentistId, out var dentistName))
                 {
                     <span class="order-dentist">Zubár: @dentistName</span>

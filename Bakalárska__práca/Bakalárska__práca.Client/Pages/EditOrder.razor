@@ -9,48 +9,64 @@
 @rendermode InteractiveAuto
 @* @attribute [Authorize(Roles = "User")] *@
 
-@if (Id == null)
-{
-    <h3>Vytvor objednávku</h3>
-}
-else
-{
-    <h3>Uprav objednávku</h3>
-}
-
-<EditForm Model="order" OnValidSubmit="HandleSubmit">
-    <DataAnnotationsValidator />
-    <div>
-        <label>Vybraný zubár:</label>
-        <p>@dentistFullName</p>
-        <label>Výber vyšetrenia:</label>
-        <p>@order.Specialization</p>
-        <label>Dátum a čas</label>
-        <InputDate @bind-Value="order.OrderTime" min="@Today"></InputDate>
-        <input class="inputTime" type="time" @bind-value="order.Time" step="900" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Potvrdiť</button>
-    @if (Id != null)
+<div class="create-order-form">
+    @if (Id == null)
     {
-        <button @onclick="ShowDialog" type="button" class="btn btn-danger">Zmazať</button>
+        <h3>Vytvor objednávku</h3>
     }
-</EditForm>
+    else
+    {
+        <h3>Uprav objednávku</h3>
+    }
+
+    <EditForm Model="order" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+
+        <div>
+            <label>Vybraný zubár:</label>
+            <p>@dentistFullName</p>
+
+            <label>Špecializácia:</label>
+            <p>@order.Specialization</p>
+            
+            <label>Aktuálny dátum a čas objednávky:</label>
+            <p>@order.OrderTime.ToString("dd-MM-yyyy HH:mm")</p>
 
 
+            <label>Zmeň dátum a čas objednávky:</label>
+            <InputDate @bind-Value="order.OrderTime" min="@Today" @onchange="OnDateChanged"></InputDate>
 
-@if (_dialogVisible)
-{
-    <div class="dialog-overlay">
-        <div class="dialog-box">
-            <h3>Naozaj chcete vymazať objednávku?</h3>
-            <div class="dialog-actions">
-                <button class="confirm-button" @onclick="ConfirmDelete">Áno, vymazať</button>
-                <button class="cancel-button" @onclick="CancelDelete">Zrušiť</button>
+            <select @bind="order.Time" class="inputTime">
+                @foreach (var availableTime in availableTimes)
+                {
+                    <option value="@availableTime" selected="@(IsSelected(availableTime) ? "selected" : null)">@availableTime</option>
+                }
+            </select>
+        </div>
+
+        <!-- Kontajner pre tlačidlá -->
+        <div class="button-container">
+            <button type="submit" class="btn btn-primary">Potvrdiť</button>
+            @if (Id != null)
+            {
+                <button @onclick="ShowDialog" type="button" class="btn btn-cancel">Zmazať</button>
+            }
+        </div>
+    </EditForm>
+
+    @if (_dialogVisible)
+    {
+        <div class="dialog-overlay">
+            <div class="dialog-box">
+                <h3>Naozaj chcete vymazať objednávku?</h3>
+                <div class="dialog-actions">
+                    <button class="confirm-button" @onclick="ConfirmDelete">Áno, vymazať</button>
+                    <button class="cancel-button" @onclick="CancelDelete">Zrušiť</button>
+                </div>
             </div>
         </div>
-    </div>
-}
+    }
+</div>
 
 @code {
     [Parameter]
@@ -64,9 +80,9 @@ else
 
     Order order { get; set; } = new Order { };
     string dentistFullName = "Neznámy zubár";
-
     private bool _dialogVisible = false;
     private string Today => DateTime.Today.ToString("yyyy-MM-dd");
+    private List<string> availableTimes = new List<string>();
 
     protected override async Task OnParametersSetAsync()
     {
@@ -81,6 +97,8 @@ else
                 dentistFullName = $"{dentist.Name} {dentist.Surname}";
                 order.Specialization = dentist.Specialization;
             }
+
+            await LoadAvailableTimes();
         }
         else
         {
@@ -99,10 +117,32 @@ else
         order.OrderPlaced = DateTime.Today;
     }
 
+    private async Task LoadAvailableTimes()
+    {
+        if (order.OrderTime != null)
+        {
+            var dentist = await DentistService.GetDentistById(order.DentistId);
+            availableTimes.Clear();
+
+            TimeSpan start = dentist.OfficeStartTime;
+            TimeSpan end = dentist.OfficeEndTime;
+
+            for (TimeSpan currentTime = start; currentTime < end; currentTime = currentTime.Add(TimeSpan.FromMinutes(30)))
+            {
+                string time = currentTime.ToString(@"hh\:mm");
+                availableTimes.Add(time);
+            }
+
+            var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, order.OrderTime.Date);
+            availableTimes = availableTimes.Where(t => !orders.Any(o => o.Time.ToString("hh:mm") == t)).ToList();
+        }
+    }
+
+    private bool IsSelected(string time) => order.Time.ToString("hh:mm") == time;
+
     async Task HandleSubmit()
     {
         order.OrderTime = order.OrderTime.Date.Add(order.Time.TimeOfDay);
-
 
         if (Id == null)
         {
@@ -137,4 +177,10 @@ else
     private readonly TimeSpan ClosingTime = new TimeSpan(18, 0, 0); // 18:00
 
     private bool IsValidTime() => order.Time.TimeOfDay >= OpeningTime && order.Time.TimeOfDay <= ClosingTime;
+
+    private async Task OnDateChanged(ChangeEventArgs e)
+    {
+        order.OrderTime = DateTime.Parse(e.Value.ToString());
+        await LoadAvailableTimes();
+    }
 }
