@@ -1,0 +1,41 @@
+﻿@inject NavigationManager NavigationManager
+@inject IReviewService ReviewService
+@rendermode InteractiveServer
+
+<button class="btn btn-danger" @onclick="ShowConfirmationDialog">Zmazať</button>
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    async Task ConfirmDelete()
+    {
+        IsConfirmationDialogVisible = false;
+        await ReviewService.DeleteReview(Id);
+    }
+}
+
+@if (IsConfirmationDialogVisible)
+{
+    <div class="dialog-overlay">
+        <div class="dialog">
+            <p>Chcete naozaj vymazať objednávku?</p>
+            <button @onclick="ConfirmDelete">Áno</button>
+            <button @onclick="CancelDelete">Nie</button>
+        </div>
+    </div>
+}
+
+@code {
+    private bool IsConfirmationDialogVisible = false;
+
+    private void ShowConfirmationDialog()
+    {
+        IsConfirmationDialogVisible = true;
+    }
+
+    private void CancelDelete()
+    {
+        IsConfirmationDialogVisible = false;
+    }
+}

@@ -1,0 +1,169 @@
+﻿@page "/review-page/{dentistId:int}"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@using Bakalárska__práca.Shared.Model
+@using Bakalárska__práca.Shared.Models
+@using Bakalárska__práca.Shared.Services
+@inject NavigationManager NavigationManager
+@inject IReviewService ReviewService
+@inject IDentistService DentistService
+@inject IUserService UserService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveAuto
+
+<h3>Hodnotenie zubára</h3>
+
+@if (Dentist != null)
+{
+    <h4>@Dentist.Name @Dentist.Surname</h4>
+    <EditForm Model="review" OnValidSubmit="HandleSubmit">
+        <DataAnnotationsValidator />
+        <div>
+            <label>Hodnotenie (1-5):</label>
+            <InputNumber @bind-Value="review.Rating" Min="1" Max="5" />
+        </div>
+        <div>
+            <label>Komentár:</label>
+            <InputTextArea @bind-Value="review.Comment" />
+        </div>
+        <button type="submit" class="btn btn-primary">Odoslať hodnotenie</button>
+    </EditForm>
+
+    <hr />
+    <h4>Recenzie:</h4>
+    @if (Reviews.Any())
+    {
+        <ul>
+            @foreach (var review in Reviews)
+            {
+                <li style="position: relative; padding-right: 90px;">
+                    <strong>Autor:</strong> @(UserNames.ContainsKey(review.UserId) ? UserNames[review.UserId] : "Neznámy používateľ")<br />
+                    <strong>Hodnotenie:</strong> @review.Rating/5 <br />
+                    <strong>Komentár:</strong> @review.Comment <br />
+                    <small>@review.Date.ToShortDateString()</small>
+
+                    @if (UserId == review.UserId)
+                    {
+                        <button class="btn btn-danger" @onclick="() => ShowDeleteConfirmation(review.Id)">Zmazať</button>
+                    }
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Zatiaľ žiadne hodnotenia.</p>
+    }
+}
+else
+{
+    <p>Načítavam údaje...</p>
+}
+
+@if (showDeleteConfirmation)
+{
+    <div class="modal" tabindex="-1" style="display:block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Potvrdenie zmazania</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Ste si istý, že chcete zmazať túto recenziu?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @onclick="CancelDelete">Zrušiť</button>
+                    <button type="button" class="btn btn-danger" @onclick="DeleteReview">Zmazať</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-warning" role="alert">
+        @errorMessage
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int? DentistId { get; set; }
+
+    private Dentist? Dentist { get; set; }
+    private List<Review> Reviews { get; set; } = new();
+    private Review review { get; set; } = new();
+    private string? UserId { get; set; }
+    private Dictionary<string, string> UserNames { get; set; } = new();
+    private bool showDeleteConfirmation = false;
+    private int reviewToDeleteId = 0;
+    private string? errorMessage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        UserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (DentistId.HasValue)
+        {
+            Dentist = await DentistService.GetDentistById(DentistId.Value);
+            Reviews = await ReviewService.GetReviewsByDentistId(DentistId.Value);
+            review.DentistId = DentistId.Value;
+            review.UserId = UserId;
+            await LoadUserNames();
+        }
+    }
+
+    private async Task LoadUserNames()
+    {
+        var userIds = Reviews.Select(r => r.UserId).Distinct();
+        foreach (var id in userIds)
+        {
+            var user = await UserService.GetUserById(id);
+            if (user != null)
+            {
+                UserNames[id] = user.UserName;
+            }
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (string.IsNullOrEmpty(UserId))
+        {
+            errorMessage = "Ak chceš ohodnotiť tohto zubára, musíš byť prihlásený!";
+            return;
+        }
+
+        errorMessage = null;
+        review.Date = DateTime.Now;
+        review.UserId = UserId;
+        await ReviewService.AddReview(review);
+        Reviews = await ReviewService.GetReviewsByDentistId(review.DentistId);
+        review = new Review { DentistId = review.DentistId, UserId = UserId };
+        await LoadUserNames();
+    }
+
+    private void ShowDeleteConfirmation(int reviewId)
+    {
+        reviewToDeleteId = reviewId;
+        showDeleteConfirmation = true;
+    }
+
+    private async Task DeleteReview()
+    {
+        var success = await ReviewService.DeleteReview(reviewToDeleteId);
+        if (success)
+        {
+            Reviews = await ReviewService.GetReviewsByDentistId(DentistId.Value);
+        }
+        showDeleteConfirmation = false;
+    }
+
+    private void CancelDelete()
+    {
+        showDeleteConfirmation = false;
+    }
+}

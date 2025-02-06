@@ -1,0 +1,160 @@
+﻿@page "/dentistInfo/{dentistId:int}"
+@inject IDentistService DentistService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@rendermode InteractiveServer
+
+<h3>Informácie o zubárovi</h3>
+
+@if (Dentist == null)
+{
+    <p>Načítavam informácie...</p>
+}
+else
+{
+    <div class="dentist-details">
+        <h2>
+            @if (IsAdmin)
+            {
+                <InputText @bind-Value="Dentist.Name" /> 
+                <InputText @bind-Value="Dentist.Surname" />
+            }
+            else
+            {
+                @($"{Dentist.Name} {Dentist.Surname}")
+            }
+        </h2>
+
+        @if (!string.IsNullOrEmpty(Dentist.PhotoUrl))
+        {
+            <img src="@Dentist.PhotoUrl" alt="Fotka zubára" width="200" />
+        }
+        else
+        {
+            <p>Fotografia nie je k dispozícii.</p>
+        }
+
+        @if (IsAdmin)
+        {
+            <h4>Nahrať novú fotografiu</h4>
+            <InputFile OnChange="HandleFileSelected" accept="image/*" />
+            <button @onclick="UploadPhoto" disabled="@(SelectedFile == null)">Nahrať</button>
+        }
+
+        <p>
+            <strong>Špecializácia: </strong>
+            @if (IsAdmin)
+            {
+                <InputText @bind-Value="Dentist.Specialization" />
+            }
+            else
+            {
+                @Dentist.Specialization
+            }
+        </p>
+
+        <p>
+            <strong>Kraj: </strong>
+            @if (IsAdmin)
+            {
+                <InputText @bind-Value="Dentist.Region" />
+            }
+            else
+            {
+                @Dentist.Region
+            }
+        </p>
+
+        <p>
+            <strong>Mesto: </strong>
+            @if (IsAdmin)
+            {
+                <InputText @bind-Value="Dentist.City" />
+            }
+            else
+            {
+                @Dentist.City
+            }
+        </p>
+
+        <p>
+            <strong>Adresa: </strong>
+            @if (IsAdmin)
+            {
+                <InputText @bind-Value="Dentist.Address" />
+            }
+            else
+            {
+                @(Dentist.Address ?? "Neznáma")
+            }
+        </p>
+
+        <p>
+            <strong>Telefón: </strong>
+            @if (IsAdmin)
+            {
+                <InputText @bind-Value="Dentist.Phone" />
+            }
+            else
+            {
+                @(Dentist.Phone ?? "Neznáme číslo")
+            }
+        </p>
+
+        <p>
+            <strong>Ordinačné hodiny:</strong>
+            Po - Ned @Dentist.OfficeStartTime.ToString(@"hh\:mm") - @Dentist.OfficeEndTime.ToString(@"hh\:mm")
+        </p>
+
+        @if (IsAdmin)
+        {
+            <button @onclick="SaveChanges">Uložiť zmeny</button>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int DentistId { get; set; }
+
+    private Dentist? Dentist { get; set; }
+    private bool IsAdmin { get; set; }
+    private IBrowserFile? SelectedFile { get; set; }
+
+    string folderPath = "wwwroot/images";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        IsAdmin = user.IsInRole("Admin");  // Kontrola, či je používateľ admin
+        Dentist = await DentistService.GetDentistById(DentistId);
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        SelectedFile = e.File;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private async Task UploadPhoto()
+    {
+        if (!IsAdmin) return; // Ochrana pred neautorizovaným volaním
+
+        var fileName = SelectedFile.Name;
+        var filePath = Path.Combine(folderPath, fileName);
+
+        await using var fileStream = new FileStream(filePath, FileMode.Create);
+        await SelectedFile.OpenReadStream().CopyToAsync(fileStream);
+
+        Dentist.PhotoUrl = filePath.Replace("wwwroot/", "");
+        await DentistService.UpdateDentist(Dentist);
+    }
+
+    private async Task SaveChanges()
+    {
+        if (!IsAdmin) return; // Ochrana pred neautorizovaným volaním
+
+        await DentistService.UpdateDentist(Dentist);
+    }
+}

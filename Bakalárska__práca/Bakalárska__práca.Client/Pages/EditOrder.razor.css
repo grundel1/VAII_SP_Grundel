@@ -1,0 +1,165 @@
+﻿.create-order-form {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    font-family: 'Arial', sans-serif;
+    color: #333;
+}
+
+    .create-order-form h3 {
+        color: #007bff;
+        font-size: 32px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    .create-order-form label {
+        font-weight: bold;
+        color: #555;
+        font-size: 18px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    .create-order-form p {
+        font-size: 18px;
+        line-height: 1.8;
+        margin: 10px 0;
+        color: #555;
+    }
+
+    .create-order-form input,
+    .create-order-form select {
+        width: 100%;
+        padding: 15px;
+        margin: 15px 0 25px 0;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 18px;
+    }
+
+        .create-order-form input:focus,
+        .create-order-form select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+    .create-order-form .btn {
+        width: 48%;
+        padding: 15px;
+        font-size: 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        margin: 15px 1%;
+    }
+
+    .create-order-form .btn-primary {
+        background-color: #007bff;
+        color: white;
+    }
+
+        .create-order-form .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .create-order-form .btn-cancel {
+        background-color: #d9534f;
+        color: white;
+    }
+
+        .create-order-form .btn-cancel:hover {
+            background-color: #c9302c;
+        }
+
+.dialog-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+    .dialog-box h3 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        color: #333;
+    }
+
+.dialog-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.dialog-box .confirm-button {
+    background-color: #d9534f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .dialog-box .confirm-button:hover {
+        background-color: #c9302c;
+    }
+
+.dialog-box .cancel-button {
+    background-color: gray;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+    .dialog-box .cancel-button:hover {
+        background-color: #d32f2f;
+    }
+
+@media (max-width: 768px) {
+    .create-order-form {
+        max-width: 90%;
+        padding: 30px;
+    }
+
+        .create-order-form .btn {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .create-order-form h3 {
+            font-size: 28px;
+        }
+
+    .dialog-box {
+        padding: 15px;
+    }
+
+        .dialog-box h3 {
+            font-size: 20px;
+        }
+
+    .dialog-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+.create-order-form .button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+}

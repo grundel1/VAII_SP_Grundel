@@ -1,0 +1,15 @@
+﻿@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+@inject IDentistService DentistService
+
+<button class="btn btn-primary btn-create" @onclick="SearchDentists">Hľadať</button>
+
+@code {
+    [Parameter] public EventCallback<List<Dentist>> OnSearchCompleted { get; set; }
+
+    private async Task SearchDentists()
+    {
+        var dentists = await DentistService.GetAllDentists();
+        await OnSearchCompleted.InvokeAsync(dentists);
+    }
+}

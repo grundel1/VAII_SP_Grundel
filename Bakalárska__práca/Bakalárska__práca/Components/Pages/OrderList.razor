@@ -1,0 +1,105 @@
+﻿@page "/orderList"
+@inject IOrderService OrderService
+@inject IDentistService DentistService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+@attribute [StreamRendering]
+
+<h3>Vaše objednávky</h3>
+
+@if (orders == null)
+{
+    <span class="loading">
+        Pre skontrolovanie tvojich objednávok
+        <a href="/Account/Login" class="login-link">sa prihlás</a>.
+    </span>
+}
+else if (orders.Count == 0)
+{
+    <span class="no-orders">Nenašli sa žiadne objednávky.</span>
+}
+else
+{
+    <ul class="order-list">
+        @foreach (var order in orders)
+        {
+            <li class="order-item">
+                <span class="order-name">@order.Specialization</span>
+                <span class="order-date">Dátum vyšetrenia: @order.OrderTime.ToString("dd-MM-yyyy HH:mm")</span>
+                @if (dentistNames.TryGetValue(order.DentistId, out var dentistName))
+                {
+                    <span class="order-dentist">Zubár: @dentistName</span>
+                }
+                else
+                {
+                    <span class="order-dentist">Zubár: Neznámy</span>
+                }
+
+                <EditOrderButton Id="@order.Id" />
+                <DeleteOrderButton Id="@order.Id" />
+            </li>
+        }
+    </ul>
+}
+
+@if (isConfirmDialogVisible)
+{
+    <div class="confirm-dialog">
+        <div class="dialog-content">
+            <p>Ste si istý, že chcete odstrániť túto objednávku?</p>
+            <button class="confirm-button" @onclick="ConfirmDelete">Áno</button>
+            <button class="cancel-button" @onclick="CancelDelete">Nie</button>
+        </div>
+    </div>
+}
+
+@code
+{
+    [Parameter]
+    public int? Id { get; set; }
+
+    List<Order>? orders = null;
+    Dictionary<int, string> dentistNames = new();
+    bool isConfirmDialogVisible = false;
+    int orderToDeleteId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            var userId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            orders = await OrderService.GetOrdersByUserId(userId);
+
+            var dentistIds = orders.Select(o => o.DentistId).Distinct();
+            foreach (var id in dentistIds)
+            {
+                var dentist = await DentistService.GetDentistById(id);
+                if (dentist != null)
+                {
+                    dentistNames[id] = $"{dentist.Name} {dentist.Surname}";
+                }
+            }
+        }
+    }
+
+    void ShowConfirmDialog(int orderId)
+    {
+        orderToDeleteId = orderId;
+        isConfirmDialogVisible = true;
+    }
+
+    async Task ConfirmDelete()
+    {
+        await OrderService.DeleteOrder(orderToDeleteId);
+        orders = await OrderService.GetAllOrders();
+        isConfirmDialogVisible = false;
+    }
+
+    void CancelDelete()
+    {
+        isConfirmDialogVisible = false;
+    }
+}

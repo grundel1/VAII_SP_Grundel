@@ -1,0 +1,97 @@
+﻿@page "/vyhladatZubara"
+@inject IDentistService DentistService
+@inject NavigationManager NavigationManager
+@attribute [StreamRendering]
+@rendermode InteractiveServer
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vyhľadanie zubára</title>
+</head>
+
+<div class="container">
+    <h1>Vyhľadaj svojho zubára a objednaj sa</h1>
+    
+    <div class="filters">
+    <div class="sel-spec">
+        <label>Špecializácia:</label>
+        <select @bind="SelectedSpecialization">
+            <option value="Všetky">Všetky</option>
+            <option value="Stomatochirurgia">Stomatochirurgia</option>
+            <option value="Parodontológia">Parodontológia</option>
+            <option value="Ortodoncia">Ortodoncia</option>
+            <option value="Pedostomatológia">Pedostomatológia</option>
+            <option value="Všeobecné pre dospelých">Všeobecné pre dospelých</option>
+            <option value="Všeobecné pre deti">Všeobecné pre deti</option>
+        </select>
+    </div>
+
+    <div class="sel-kraj">
+        <label>Kraj:</label>
+        <select @bind="SelectedRegion">
+            <option value="Všetko">Celé Slovensko</option>
+            <option value="Banskobystrický kraj">Banskobystrický kraj</option>
+            <option value="Bratislavský kraj">Bratislavský kraj</option>
+            <option value="Košický kraj">Košický kraj</option>
+            <option value="Nitriansky kraj">Nitriansky kraj</option>
+            <option value="Prešovský kraj">Prešovský kraj</option>
+            <option value="Trenčiansky kraj">Trenčiansky kraj</option>
+            <option value="Trnavský kraj">Trnavský kraj</option>
+            <option value="Žilinský kraj">Žilinský kraj</option>
+        </select>
+    </div>
+
+    <button @onclick="FilterDentists">Vyfiltruj</button>
+</div>
+
+    <hr />
+
+    @if (FilteredDentists == null)
+    {
+        <p class="loading">Načítavam dáta...</p>
+    }
+    else
+    {
+        <ul class="dentist-list">
+            @foreach (var dentist in FilteredDentists)
+            {
+                <li class="dentist-card">
+                    <div class="dentist-info">
+                        <a href="/dentistInfo/@dentist.Id" class="dentist-name">
+                            @dentist.Name @dentist.Surname
+                        </a>
+                        <span class="dentist-location">@dentist.Region - (@dentist.City)</span>
+                    </div>
+                    <div class="button-group">
+                        <ReviewPageButton DentistId="@dentist.Id"/>
+                        <CreateOrderButton DentistId="@dentist.Id" />
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+@code {
+    List<Dentist> FilteredDentists = null;
+    private string? SelectedSpecialization;
+    private string? SelectedRegion;
+
+    protected override async Task OnInitializedAsync()
+    {
+        FilteredDentists = await DentistService.GetAllDentists();
+    }
+
+    private async void FilterDentists()
+    {
+        if (SelectedSpecialization == "Všetky" && SelectedRegion == "Všetko")
+        {
+            FilteredDentists = await DentistService.GetAllDentists();
+        }
+        else
+        {
+            FilteredDentists = await DentistService.GetFilteredDentists(SelectedSpecialization, SelectedRegion);
+        }
+        StateHasChanged();
+    }
+}

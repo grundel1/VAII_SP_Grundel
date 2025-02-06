@@ -1,0 +1,24 @@
+﻿@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<button class="btn btn-primary btn-create" @onclick="CreateOrder">Objednaj sa</button>
+
+@code {
+    [Parameter]
+    public int DentistId { get; set; }
+
+    private async Task CreateOrder()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authenticationState.User;
+
+        if (!user.Identity.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/Account/Login");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/create-order/{DentistId}");
+        }
+    }
+}

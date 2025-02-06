@@ -1,0 +1,66 @@
+﻿.dentist-details {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 40px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.15);
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    overflow: hidden;
+    text-align: center;
+}
+
+    .dentist-details h2 {
+        color: #007bff;
+        font-size: 36px;
+        margin-bottom: 15px;
+        font-weight: bold;
+    }
+
+    .dentist-details h4 {
+        margin-top: 30px;
+        font-size: 26px;
+        color: #555;
+    }
+
+    .dentist-details p {
+        font-size: 18px;
+        line-height: 1.8;
+        margin: 15px 0;
+        padding: 10px;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        text-align: left;
+    }
+
+    .dentist-details img {
+        width: 100%;
+        max-width: 250px;
+        border-radius: 50%;
+        margin: 20px auto;
+        display: block;
+    }
+
+@media (max-width: 768px) {
+    .dentist-details {
+        max-width: 95%;
+        padding: 25px;
+    }
+
+        .dentist-details h2 {
+            font-size: 30px;
+        }
+
+        .dentist-details p {
+            font-size: 16px;
+        }
+
+        .dentist-details h4 {
+            font-size: 24px;
+        }
+
+        .dentist-details img {
+            max-width: 200px;
+        }
+}
