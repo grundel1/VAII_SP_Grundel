@@ -134,3 +134,19 @@ hr {
     display: flex;
     gap: 10px;
 }
+
+.dentist-specializations {
+    margin-top: 8px;
+}
+
+.specialization-badge {
+    display: inline-block;
+    background-color: #e0f7fa;
+    color: #00796b;
+    padding: 3px 8px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    border: 1px solid #b2ebf2;
+}

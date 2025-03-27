@@ -10,47 +10,53 @@
 @rendermode InteractiveServer
 
 <div class="create-order-form">
-    @if (Id == null)
-    {
-        <h3>Vytvor objednávku</h3>
-    }
-    else
-    {
-        <h3>Uprav objednávku</h3>
-    }
+    <h3>Uprav objednávku</h3>
 
     <EditForm Model="order" OnValidSubmit="HandleSubmit">
         <DataAnnotationsValidator />
 
-        <div>
+        <div class="form-group">
             <label>Vybraný zubár:</label>
-            <p>@dentistFullName</p>
+            <p class="form-control-static">@dentistFullName</p>
 
             <label>Špecializácia:</label>
-            <p>@order.Specialization</p>
+            <p class="form-control-static">@order.Specialization</p>
 
             <label>Aktuálny dátum a čas objednávky:</label>
-            <p>@order.OrderTime.ToString("dd-MM-yyyy HH:mm")</p>
+            <p class="form-control-static">@order.OrderTime.ToString("dd.MM.yyyy HH:mm")</p>
 
-            <label>Zmeň dátum a čas objednávky:</label>
-            <InputDate @bind-Value="OrderTime" min="@Tomorrow" />
+            <div class="form-group">
+                <label for="orderDate">Nový dátum:</label>
+                <InputDate id="orderDate" @bind-Value="OrderTime" min="@Tomorrow" class="form-control" />
+            </div>
 
-            <select @bind="order.Time" class="inputTime">
-                @foreach (var availableTime in availableTimes)
-                {
-                    <option value="@availableTime" selected="@(IsSelected(availableTime) ? "selected" : null)">@availableTime</option>
-                }
-            </select>
+            <div class="form-group">
+                <label for="orderTime">Nový čas:</label>
+                <select id="orderTime" @bind="SelectedTime" class="form-control" disabled="@(availableTimes.Count == 0 || IsWeekend(_orderTime))">
+                    @if (availableTimes.Count == 0)
+                    {
+                        <option value="">@(IsWeekend(_orderTime) ? "Objednávky nie sú možné cez víkend" : "Žiadne voľné časy v tento deň")</option>
+                    }
+                    else
+                    {
+                        <option value="">Vyberte čas</option>
+                        @foreach (var availableTime in availableTimes)
+                        {
+                            <option value="@availableTime">@availableTime</option>
+                        }
+                    }
+                </select>
+            </div>
 
             @if (timeErrorMessage != null)
             {
-                <div class="alert alert-danger">@timeErrorMessage</div>
+                <div class="alert @(IsWeekend(_orderTime) ? "alert-weekend" : "alert-danger")">@timeErrorMessage</div>
             }
         </div>
 
         <div class="button-container">
-            <button type="submit" class="btn btn-primary">Potvrdiť</button>
-            <button @onclick="ShowDialog" type="button" class="btn btn-cancel">Zmazať</button>
+            <button type="submit" class="btn btn-primary" disabled="@(availableTimes.Count == 0 || IsWeekend(_orderTime))">Potvrdiť zmeny</button>
+            <button @onclick="ShowDialog" type="button" class="btn btn-cancel">Zmazať objednávku</button>
         </div>
     </EditForm>
 
@@ -79,12 +85,6 @@
     [Parameter]
     public int? Id { get; set; }
 
-    [Parameter]
-    public int? DentistId { get; set; }
-
-    [Parameter]
-    public string? UserId { get; set; }
-
     Order order { get; set; } = new Order { };
     string dentistFullName = "Neznámy zubár";
     private bool _dialogVisible = false;
@@ -96,15 +96,48 @@
     private bool showLoginMessage = false;
 
     private DateTime _orderTime;
-    //prebrate od AI
     private DateTime OrderTime
     {
         get => _orderTime;
         set
         {
             _orderTime = value;
-            Console.WriteLine($"Dátum objednávky zmenený na: {value:dd.MM.yyyy}"); // ✅ Výpis do konzoly
-            LoadAvailableTimes();
+            Console.WriteLine($"Dátum zmenený na: {value:dd.MM.yyyy}");
+
+            if (IsWeekend(value))
+            {
+                timeErrorMessage = "Objednávky nie sú možné cez víkend.";
+                availableTimes.Clear();
+                StateHasChanged();
+            }
+            else
+            {
+                timeErrorMessage = null;
+                LoadAvailableTimes().ConfigureAwait(false);
+            }
+        }
+    }
+
+    private string _selectedTime;
+    private string SelectedTime
+    {
+        get => _selectedTime;
+        set
+        {
+            _selectedTime = value;
+            if (!string.IsNullOrEmpty(value))
+            {
+                try
+                {
+                    var time = TimeSpan.Parse(value);
+                    order.Time = _orderTime.Date.Add(time);
+                    timeErrorMessage = null;
+                }
+                catch (FormatException)
+                {
+                    timeErrorMessage = "Neplatný formát času";
+                }
+            }
         }
     }
 
@@ -113,28 +146,14 @@
         if (Id.HasValue)
         {
             order = await OrderService.GetOrderById(Id.Value);
-            DentistId = order.DentistId;
             _orderTime = order.OrderTime;
+            _selectedTime = order.Time.ToString("HH:mm");
 
-            if (DentistId.HasValue)
-            {
-                var dentist = await DentistService.GetDentistById(DentistId.Value);
-                dentistFullName = $"{dentist.Name} {dentist.Surname}";
-                order.Specialization = dentist.Specialization;
-            }
+            var dentist = await DentistService.GetDentistById(order.DentistId);
+            dentistFullName = $"{dentist.Name} {dentist.Surname}";
+            order.Specialization = dentist.Specialization;
 
             await LoadAvailableTimes();
-        }
-        else
-        {
-            order = new Order { };
-            if (DentistId.HasValue)
-            {
-                order.DentistId = DentistId.Value;
-                var dentist = await DentistService.GetDentistById(DentistId.Value);
-                dentistFullName = $"{dentist.Name} {dentist.Surname}";
-            }
-            _orderTime = DateTime.Today;
         }
     }
 
@@ -145,14 +164,23 @@
 
         if (user.Identity.IsAuthenticated)
         {
-            UserId = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             isUserAuthenticated = true;
         }
     }
 
-    //prebrate z AI
+    private bool IsWeekend(DateTime date)
+    {
+        return date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday;
+    }
+
     private async Task LoadAvailableTimes()
     {
+        if (IsWeekend(_orderTime))
+        {
+            availableTimes.Clear();
+            return;
+        }
+
         if (_orderTime != default)
         {
             var dentist = await DentistService.GetDentistById(order.DentistId);
@@ -168,51 +196,72 @@
             }
 
             var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, _orderTime.Date);
-            availableTimes = availableTimes.Where(t => !orders.Any(o => o.Time.ToString("hh:mm") == t)).ToList();
+            // Vylúčiť aktuálnu objednávku z kontroly dostupnosti
+            orders = orders.Where(o => o.Id != order.Id).ToList();
+
+            availableTimes = availableTimes
+                .Where(t => !orders.Any(o => o.Time.TimeOfDay == TimeSpan.Parse(t)))
+                .ToList();
+
+            if (!string.IsNullOrEmpty(_selectedTime) && !availableTimes.Contains(_selectedTime))
+            {
+                _selectedTime = availableTimes.FirstOrDefault();
+                if (!string.IsNullOrEmpty(_selectedTime))
+                {
+                    order.Time = _orderTime.Date.Add(TimeSpan.Parse(_selectedTime));
+                }
+            }
+
+            StateHasChanged();
         }
     }
 
-    //prebrate z AI
-    private bool IsSelected(string time) => order.Time.ToString("hh:mm") == time;
-
     async Task HandleSubmit()
     {
-        if (_orderTime.Date < DateTime.Today.AddDays(1)) // Prevent orders for today
+        if (IsWeekend(_orderTime))
+        {
+            timeErrorMessage = "Objednávky nie sú možné cez víkend.";
+            return;
+        }
+
+        if (_orderTime.Date < DateTime.Today.AddDays(1))
         {
             timeErrorMessage = "Objednávky sú povolené len od zajtra.";
             return;
         }
 
-        if (string.IsNullOrEmpty(UserId))
+        if (!isUserAuthenticated)
         {
             timeErrorMessage = "Musíte byť prihlásený na úpravu objednávky.";
             return;
         }
 
-        bool isTimeTaken = await CheckIfTimeAvailable(_orderTime);
+        if (string.IsNullOrEmpty(_selectedTime))
+        {
+            timeErrorMessage = "Vyberte prosím čas.";
+            return;
+        }
+
+        bool isTimeTaken = await CheckIfTimeAvailable(order.Time);
         if (isTimeTaken)
         {
             timeErrorMessage = "Tento čas je už obsadený. Vyberte iný.";
             return;
         }
 
-        order.OrderTime = _orderTime.Date.Add(order.Time.TimeOfDay);
-        order.UserId = UserId;
+        order.OrderTime = _orderTime.Date.Add(TimeSpan.Parse(_selectedTime));
 
-        if (Id == null)
-        {
-            await OrderService.AddOrder(order);
-            NavigationManager.NavigateTo("/orderList");
-        }
-        else
-        {
-            await OrderService.EditOrder((int)Id, order);
-            NavigationManager.NavigateTo("/orderList");
-        }
+        await OrderService.EditOrder((int)Id, order);
+        NavigationManager.NavigateTo("/orderList");
     }
 
     private void ShowDialog()
     {
+        if (!isUserAuthenticated)
+        {
+            showLoginMessage = true;
+            return;
+        }
         _dialogVisible = true;
     }
 
@@ -228,15 +277,10 @@
         _dialogVisible = false;
     }
 
-    //prebrate z AI
     private async Task<bool> CheckIfTimeAvailable(DateTime orderDateTime)
     {
         var orders = await OrderService.GetOrdersByDentistAndDate(order.DentistId, orderDateTime.Date);
-        return orders.Any(o => o.Time == orderDateTime);
-    }
-
-    private void CancelOrder()
-    {
-        NavigationManager.NavigateTo("/vyhladatZubara");
+        // Vylúčiť aktuálnu objednávku z kontroly
+        return orders.Any(o => o.Time == orderDateTime && o.Id != order.Id);
     }
 }

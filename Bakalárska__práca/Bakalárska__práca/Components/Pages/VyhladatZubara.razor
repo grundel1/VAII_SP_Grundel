@@ -13,42 +13,46 @@
     <h1>Vyhľadaj svojho zubára a objednaj sa</h1>
     
     <div class="filters">
-    <div class="sel-spec">
-        <label>Špecializácia:</label>
-        <select @bind="SelectedSpecialization">
-            <option value="Všetky">Všetky</option>
-            <option value="Stomatochirurgia">Stomatochirurgia</option>
-            <option value="Parodontológia">Parodontológia</option>
-            <option value="Ortodoncia">Ortodoncia</option>
-            <option value="Pedostomatológia">Pedostomatológia</option>
-            <option value="Všeobecné pre dospelých">Všeobecné pre dospelých</option>
-            <option value="Všeobecné pre deti">Všeobecné pre deti</option>
-        </select>
-    </div>
+        <div class="sel-spec">
+            <label>Špecializácia:</label>
+            <select @bind="SelectedSpecialization">
+                <option value="">Všetky</option>
+                <option value="Stomatochirurgia">Stomatochirurgia</option>
+                <option value="Parodontológia">Parodontológia</option>
+                <option value="Ortodoncia">Ortodoncia</option>
+                <option value="Pedostomatológia">Pedostomatológia</option>
+                <option value="Všeobecné pre dospelých">Všeobecné pre dospelých</option>
+                <option value="Všeobecné pre deti">Všeobecné pre deti</option>
+            </select>
+        </div>
 
-    <div class="sel-kraj">
-        <label>Kraj:</label>
-        <select @bind="SelectedRegion">
-            <option value="Všetko">Celé Slovensko</option>
-            <option value="Banskobystrický kraj">Banskobystrický kraj</option>
-            <option value="Bratislavský kraj">Bratislavský kraj</option>
-            <option value="Košický kraj">Košický kraj</option>
-            <option value="Nitriansky kraj">Nitriansky kraj</option>
-            <option value="Prešovský kraj">Prešovský kraj</option>
-            <option value="Trenčiansky kraj">Trenčiansky kraj</option>
-            <option value="Trnavský kraj">Trnavský kraj</option>
-            <option value="Žilinský kraj">Žilinský kraj</option>
-        </select>
-    </div>
+        <div class="sel-kraj">
+            <label>Kraj:</label>
+            <select @bind="SelectedRegion">
+                <option value="">Celé Slovensko</option>
+                <option value="Banskobystrický kraj">Banskobystrický kraj</option>
+                <option value="Bratislavský kraj">Bratislavský kraj</option>
+                <option value="Košický kraj">Košický kraj</option>
+                <option value="Nitriansky kraj">Nitriansky kraj</option>
+                <option value="Prešovský kraj">Prešovský kraj</option>
+                <option value="Trenčiansky kraj">Trenčiansky kraj</option>
+                <option value="Trnavský kraj">Trnavský kraj</option>
+                <option value="Žilinský kraj">Žilinský kraj</option>
+            </select>
+        </div>
 
-    <button @onclick="FilterDentists">Vyfiltruj</button>
-</div>
+        <button @onclick="FilterDentists">Vyfiltruj</button>
+    </div>
 
     <hr />
 
     @if (FilteredDentists == null)
     {
         <p class="loading">Načítavam dáta...</p>
+    }
+    else if (!FilteredDentists.Any())
+    {
+        <p class="no-results">Nenašli sa žiadni zubári podľa zadaných kritérií.</p>
     }
     else
     {
@@ -60,7 +64,19 @@
                         <a href="/dentistInfo/@dentist.Id" class="dentist-name">
                             @dentist.Name @dentist.Surname
                         </a>
-                        <span class="dentist-location">@dentist.Region - (@dentist.City)</span>
+                        <span class="dentist-location">@dentist.Region - @dentist.City</span>
+                        
+                        <!-- Zobrazenie špecializácií -->
+                        <div class="dentist-specializations">
+                            @if (!string.IsNullOrEmpty(dentist.Specialization))
+                            {
+                                var specializations = dentist.Specialization.Split(new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries);
+                                @foreach (var spec in specializations)
+                                {
+                                    <span class="specialization-badge">@spec.Trim()</span>
+                                }
+                            }
+                        </div>
                     </div>
                     <div class="button-group">
                         <ReviewPageButton DentistId="@dentist.Id"/>
@@ -74,24 +90,20 @@
 
 @code {
     List<Dentist> FilteredDentists = null;
-    private string? SelectedSpecialization;
-    private string? SelectedRegion;
+    private string SelectedSpecialization = "";
+    private string SelectedRegion = "";
 
     protected override async Task OnInitializedAsync()
     {
         FilteredDentists = await DentistService.GetAllDentists();
     }
 
-    private async void FilterDentists()
+    private async Task FilterDentists()
     {
-        if (SelectedSpecialization == "Všetky" && SelectedRegion == "Všetko")
-        {
-            FilteredDentists = await DentistService.GetAllDentists();
-        }
-        else
-        {
-            FilteredDentists = await DentistService.GetFilteredDentists(SelectedSpecialization, SelectedRegion);
-        }
+        FilteredDentists = await DentistService.GetFilteredDentists(
+            string.IsNullOrEmpty(SelectedSpecialization) ? null : SelectedSpecialization,
+            string.IsNullOrEmpty(SelectedRegion) ? null : SelectedRegion
+        );
         StateHasChanged();
     }
 }
